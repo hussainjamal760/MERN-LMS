@@ -2,7 +2,7 @@ import {Request , Response , NextFunction} from 'express'
 import userModel from '../models/user.model'
 import ErrorHandler from "../utils/ErrorHandler"
 import {CatchAsyncError} from "../middleware/CatchAsyncErrors"
-require('dotenv').config;
+require('dotenv').config();
 import jwt, { Secret } from 'jsonwebtoken'
 import ejs from "ejs"
 import path from 'path';
@@ -17,6 +17,7 @@ interface IRegistrationBody{
 }
 
 export const registrationUser = CatchAsyncError(async(req:Request , res:Response , next:NextFunction)=>{
+   
     try {
         const {name , email ,password} = req.body;
         const isEmailExists = await userModel.findOne({email});
@@ -38,7 +39,6 @@ export const registrationUser = CatchAsyncError(async(req:Request , res:Response
         const html = await ejs.renderFile(path.join(__dirname,"../mails/activation-mail.ejs"), data )
 
         try {
-
             await sendMail({
                 email:user.email,
                 subject:"Activate your account",
@@ -46,11 +46,12 @@ export const registrationUser = CatchAsyncError(async(req:Request , res:Response
                 data,
             })
 
-            res.json(201).json({
-                success:true,
-                message:`Please check your mail ${user.email} to activate your account`,
-                activationToken : activationToken.token,
-            })
+            res.status(201).json({
+            success: true,
+            message: `Please check your mail ${user.email} to activate your account`,
+            activationToken: activationToken.token,
+})
+
             
         } catch (error:any) {
             return next(new ErrorHandler(error.message ,400))
