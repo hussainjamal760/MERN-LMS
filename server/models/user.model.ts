@@ -70,12 +70,12 @@ userSchema.pre<IUser>('save',async function(next){
     next();
 })
 
-userSchema.methods.SignAccessToken=function(){
-    return jwt.sign({id:this._id },process.env.ACCESS_TOKEN || ''),{expiresIn:'5m'}
+userSchema.methods.SignAccessToken = function() {
+    return jwt.sign({ id: this._id }, process.env.ACCESS_TOKEN as string, { expiresIn: '5m' });
 }
 
-userSchema.methods.SignRefreshToken=function(){
-    return jwt.sign({id:this._id },process.env.REFRESH_TOKEN || ''),{expiresIn:'7d'}
+userSchema.methods.SignRefreshToken = function() {
+    return jwt.sign({ id: this._id }, process.env.REFRESH_TOKEN as string, { expiresIn: '7d' });
 }
 
 
