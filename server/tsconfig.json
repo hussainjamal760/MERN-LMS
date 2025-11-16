@@ -1,7 +1,8 @@
 {
   "compilerOptions": {
     "target": "ES2020",
-    "typeRoots": ["./node_modules/@types", "./server/@types"],    "module": "CommonJS",
+    "typeRoots": ["./node_modules/@types", "./@types"],    
+    "module": "CommonJS",
     "moduleResolution": "Node",
     "esModuleInterop": true,
     "strict": true,

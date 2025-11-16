@@ -5,7 +5,7 @@ import  jwt,{ JwtPayload } from "jsonwebtoken";
 import {redis} from "../utils/redis"
 require('dotenv').config()
 
-export const isAuthenticated = CatchAsyncError(async (req:Request , res:Request , next:NextFunction)=>{
+export const isAuthenticated = CatchAsyncError(async (req:Request , res:Response , next:NextFunction)=>{
     const access_token = req.cookies.access_token as string;
 
     if(!access_token){
