@@ -9,6 +9,7 @@ import path from 'path';
 import sendMail from '../utils/sendMail';
 import {accessTokenOptions, refreshTokenOptions, sendToken} from "../utils/jwt"
 import { redis } from '../utils/redis';
+import { getUserById } from '../services/user.service';
 
 
 interface IRegistrationBody{
@@ -198,7 +199,6 @@ export const updateAccessToken = CatchAsyncError(async(req:Request, res:Response
             return next(new ErrorHandler("Please login to access this resource", 400));
         }
 
-        // Parse user from session
         const user = JSON.parse(session);
         
         if (!user || !user._id) {
@@ -231,3 +231,17 @@ export const updateAccessToken = CatchAsyncError(async(req:Request, res:Response
         return next(new ErrorHandler(error.message, 400));
     }
 });
+
+export const getUserInfo = CatchAsyncError(async (req:Request,res:Response,next:NextFunction)=>{
+    try{
+        const userId = req.user?._id.toString();
+        if (!userId) {
+        return next(new ErrorHandler("User not found", 400));
+        }
+        getUserById(userId,res)
+
+    }catch (error: any) {
+        return next(new ErrorHandler(error.message, 400));
+    }
+})
+
