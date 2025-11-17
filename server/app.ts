@@ -5,6 +5,7 @@ import cors from "cors";
 import cookieParser from "cookie-parser";
 import {ErrorMiddleware} from './middleware/error'
 import userRouter from "./routes/user.route"
+import courseRouter from "./routes/course.route"
 
 app.use(express.json({limit:"50mb"}));
 
@@ -22,6 +23,8 @@ app.get("/test" ,(req:Request,res:Response , next:NextFunction)=>{
 })
 
 app.use('/api/v1' , userRouter)
+
+app.use('/api/v1' , courseRouter)
 
 app.use((req: Request, res: Response, next: NextFunction) => {
   const err = new Error(`Route ${req.originalUrl} not Found`) as any;

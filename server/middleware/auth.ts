@@ -28,3 +28,26 @@ export const isAuthenticated = CatchAsyncError(async (req:Request , res:Response
 
     next()
 })
+
+
+export const authorizeRoles = (...roles: string[]) => {
+    return (req: Request, res: Response, next: NextFunction) => {
+
+        // req.user is set by isAuthenticated middleware
+        if (!req.user) {
+            return next(new ErrorHandler("User not authenticated", 401));
+        }
+
+        // agar user ka role allowed list me nahi ha
+        if (!roles.includes(req.user.role)) {
+            return next(
+                new ErrorHandler(
+                    `Role: ${req.user.role} is not allowed to access this resource`,
+                    403
+                )
+            );
+        }
+
+        next();
+    };
+};
