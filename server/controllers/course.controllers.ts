@@ -165,13 +165,7 @@ export const addQuestion = CatchAsyncError(async(req:Request,res:Response,next:N
     try {
         const {question , contentId, courseId}:IAddQuestionData = req.body;
         
-        console.log("=== ADD QUESTION DEBUG ===");
-        console.log("Request user:", req.user);
-        console.log("Request user ID:", req.user?._id);
-        console.log("Question text:", question);
-        console.log("Content ID:", contentId);
-        console.log("Course ID:", courseId);
-        
+
         if(!req.user || !req.user._id){
             return next(new ErrorHandler("User not authenticated" , 401))
         }
@@ -192,36 +186,29 @@ export const addQuestion = CatchAsyncError(async(req:Request,res:Response,next:N
             return next(new ErrorHandler("Invalid Content id" , 400))
         }
 
-        // Create new question with explicit ObjectId
         const newQuestion = {
             user: new mongoose.Types.ObjectId(req.user._id.toString()),
             question: question,
             questionReplies: []
         }
 
-        console.log("New question object:", newQuestion);
-        console.log("Type of user field:", typeof newQuestion.user);
-
+       
         courseContent.questions.push(newQuestion as any)
 
-        console.log("Questions array after push:", courseContent.questions);
 
         await course.save()
 
-        console.log("Course saved successfully");
 
         // Fetch fresh to verify
         const verifyCourse = await CourseModel.findById(courseId);
         const verifyContent = verifyCourse?.courseData?.find((item:any)=>item._id.equals(contentId));
         const lastQuestion = verifyContent?.questions[verifyContent.questions.length - 1];
-        console.log("Last saved question:", JSON.stringify(lastQuestion, null, 2));
 
         res.status(200).json({
             success:true,
             course
         })
     } catch (error:any) {
-        console.log("addQuestion error:", error);
         return next(new ErrorHandler(error.message , 500))
     }
 })
@@ -262,11 +249,7 @@ export const addAnswer = CatchAsyncError(async(req:Request,res:Response,next:Nex
             return next(new ErrorHandler("invalid question id" , 500))
         }
         
-        // Debug: Check what's in question.user
-        console.log("Question object:", JSON.stringify(question, null, 2));
-        console.log("Question user:", question.user);
-        console.log("Type of question.user:", typeof question.user);
-        
+     
         if(!question.user){
             return next(new ErrorHandler("Question user not found" , 500))
         }
@@ -279,24 +262,18 @@ export const addAnswer = CatchAsyncError(async(req:Request,res:Response,next:Nex
         question.questionReplies.push(newAnswer)
         await course?.save()
 
-        // Handle both old format (full object) and new format (ObjectId)
         let questionUser;
         let questionUserId;
         
-        // Cast to any to check the actual runtime value
         const userField: any = question.user;
         
-        // Check if it's an ObjectId (string representation or ObjectId instance)
         if (typeof userField === 'string' || userField instanceof mongoose.Types.ObjectId) {
-            // New format: user is stored as ObjectId
             questionUserId = userField.toString();
             questionUser = await userModel.findById(questionUserId);
         } else if (userField && userField._id) {
-            // Old format: user is stored as full object
             questionUserId = userField._id.toString();
             questionUser = userField;
         } else {
-            console.log("Unknown user format:", userField);
             return next(new ErrorHandler("Invalid question user format" , 500))
         }
 
@@ -306,7 +283,6 @@ export const addAnswer = CatchAsyncError(async(req:Request,res:Response,next:Nex
 
         if (req.user?._id.toString() === questionUserId) {
             //notification
-            console.log("Same user - no email sent")
         } else {
             const data = {
                 name: questionUser.name,
@@ -320,9 +296,7 @@ export const addAnswer = CatchAsyncError(async(req:Request,res:Response,next:Nex
                     template: "question-reply.ejs",
                     data,
                 })
-                console.log("Email sent successfully to:", questionUser.email);
             } catch (error:any) {
-                console.log("Email sending error:", error);
                 return next(new ErrorHandler(error.message , 500))
             }
         }
@@ -333,7 +307,6 @@ export const addAnswer = CatchAsyncError(async(req:Request,res:Response,next:Nex
         })
 
     } catch (error:any) {
-        console.log("Full error:", error);
         return next(new ErrorHandler(error.message , 500))
     }
 })
@@ -391,7 +364,54 @@ export const addReview =CatchAsyncError(async(req:Request,res:Response,next:Next
         })
 
     } catch (error:any) {
-        console.log("Full error:", error);
+        return next(new ErrorHandler(error.message , 500))
+    }
+})
+
+interface IAddReviewData{
+    comment:string,
+    courseId:string,
+    reviewId:string,
+}
+
+export const addReplyToReview =CatchAsyncError(async(req:Request,res:Response,next:NextFunction)=>{
+    try { 
+
+        const {comment , courseId , reviewId} = req.body as IAddReviewData
+
+        const course = await CourseModel.findById(courseId)
+
+        if(!course){
+            return next(new ErrorHandler("Course not found" , 404))
+        }
+
+        const review = course?.reviews?.find(
+            (rev:any)=>rev._id.toString()===reviewId
+        )
+
+        if(!review){
+            return next(new ErrorHandler("Review not found" , 404))
+        }
+
+        const replyData :any = {
+            user:req.user,
+            comment,
+        }
+
+        if(!review.commentReplies){
+            review.commentReplies = []
+        }
+
+        review.commentReplies?.push(replyData);
+
+        await course?.save();
+
+        res.status(200).json({
+            success:true,
+            course
+        })
+
+    } catch (error:any) {
         return next(new ErrorHandler(error.message , 500))
     }
 })
