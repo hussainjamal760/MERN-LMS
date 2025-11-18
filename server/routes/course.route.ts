@@ -8,7 +8,7 @@ courseRouter.put('/edit-course/:id',isAuthenticated , authorizeRoles("admin"),ed
 courseRouter.get('/get-course/:id',getSingleCourse);
 courseRouter.get('/get-courses',getAllCourses);
 courseRouter.get('/get-course-content/:id',isAuthenticated,getCourseByUser);
-courseRouter.put('/add-question',addQuestion);
-courseRouter.put('/add-answer',addAnswer);
+courseRouter.put('/add-question',isAuthenticated,addQuestion);
+courseRouter.put('/add-answer',isAuthenticated,addAnswer);
 
 export default courseRouter

@@ -2,7 +2,7 @@ import mongoose,{Schema,Document,Model,Types} from 'mongoose'
 import { IUser } from './user.model'
 
 interface IComment extends Document{
-    user:IUser,
+    user: Types.ObjectId,  // Changed to just ObjectId
     question:string,
     questionReplies:IComment[],
 }
@@ -60,9 +60,12 @@ const linkSchema = new Schema<ILink>({
 })
 
 const commentSchema = new Schema<IComment>({
-    user:Object,
-    question:String, 
-    questionReplies:[Object]
+    user: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User'
+    },
+    question: String, 
+    questionReplies: [Object]
 })
 
 const courseDataSchema = new Schema<ICourseData>({
@@ -97,9 +100,7 @@ const courseSchema = new Schema<ICourse>({
         public_id:{
             type:String,
         },
-        url: { type: String, 
-     }
-
+        url: { type: String }
     },
     tags:{
         type:String,
@@ -125,7 +126,7 @@ const courseSchema = new Schema<ICourse>({
         type:Number,
         default:0,
     }
-})
+}, {timestamps: true})
 
 const CourseModel: Model<ICourse> = mongoose.model("Course" , courseSchema)
 

@@ -9,6 +9,7 @@ import mongoose from 'mongoose'
 import path from 'path'
 import ejs from 'ejs'
 import sendMail from '../utils/sendMail'
+import userModel from '../models/user.model'
 
 
 
@@ -163,38 +164,67 @@ interface IAddQuestionData{
 export const addQuestion = CatchAsyncError(async(req:Request,res:Response,next:NextFunction)=>{
     try {
         const {question , contentId, courseId}:IAddQuestionData = req.body;
-        const course=await CourseModel.findById(courseId)
+        
+        console.log("=== ADD QUESTION DEBUG ===");
+        console.log("Request user:", req.user);
+        console.log("Request user ID:", req.user?._id);
+        console.log("Question text:", question);
+        console.log("Content ID:", contentId);
+        console.log("Course ID:", courseId);
+        
+        if(!req.user || !req.user._id){
+            return next(new ErrorHandler("User not authenticated" , 401))
+        }
+        
+        const course = await CourseModel.findById(courseId)
+
+        if(!course){
+            return next(new ErrorHandler("Course not found" , 404))
+        }
 
         if(!mongoose.Types.ObjectId.isValid(contentId)){
-        return next(new ErrorHandler("Invalid Content id" , 400))
+            return next(new ErrorHandler("Invalid Content id" , 400))
         }
 
         const courseContent = course?.courseData?.find((item:any)=>item._id.equals(contentId))
 
         if(!courseContent){
-        return next(new ErrorHandler("Invalid Content id" , 400))
+            return next(new ErrorHandler("Invalid Content id" , 400))
         }
 
-        const newQuestion:any={
-            user:req.user,
-            question,
-            questionReplies:[]
+        // Create new question with explicit ObjectId
+        const newQuestion = {
+            user: new mongoose.Types.ObjectId(req.user._id.toString()),
+            question: question,
+            questionReplies: []
         }
 
-        courseContent.questions.push(newQuestion)
+        console.log("New question object:", newQuestion);
+        console.log("Type of user field:", typeof newQuestion.user);
 
-        await course?.save()
+        courseContent.questions.push(newQuestion as any)
+
+        console.log("Questions array after push:", courseContent.questions);
+
+        await course.save()
+
+        console.log("Course saved successfully");
+
+        // Fetch fresh to verify
+        const verifyCourse = await CourseModel.findById(courseId);
+        const verifyContent = verifyCourse?.courseData?.find((item:any)=>item._id.equals(contentId));
+        const lastQuestion = verifyContent?.questions[verifyContent.questions.length - 1];
+        console.log("Last saved question:", JSON.stringify(lastQuestion, null, 2));
 
         res.status(200).json({
             success:true,
             course
         })
     } catch (error:any) {
+        console.log("addQuestion error:", error);
         return next(new ErrorHandler(error.message , 500))
     }
 })
-
-
 
 
 interface IAddAnswerData{
@@ -207,16 +237,21 @@ interface IAddAnswerData{
 export const addAnswer = CatchAsyncError(async(req:Request,res:Response,next:NextFunction)=>{
     try {
         const {answer , contentId, courseId , questionId}:IAddAnswerData = req.body;
-        const course=await CourseModel.findById(courseId)
+        
+        const course = await CourseModel.findById(courseId);
+
+        if(!course){
+            return next(new ErrorHandler("Course not found" , 404))
+        }
 
         if(!mongoose.Types.ObjectId.isValid(contentId)){
-        return next(new ErrorHandler("Invalid Content id" , 400))
+            return next(new ErrorHandler("Invalid Content id" , 400))
         }
 
         const courseContent = course?.courseData?.find((item:any)=>item._id.equals(contentId))
 
         if(!courseContent){
-        return next(new ErrorHandler("Invalid Content id" , 400))
+            return next(new ErrorHandler("Invalid Content id" , 400))
         }
 
         const question = courseContent?.questions?.find((item:any)=>
@@ -227,51 +262,78 @@ export const addAnswer = CatchAsyncError(async(req:Request,res:Response,next:Nex
             return next(new ErrorHandler("invalid question id" , 500))
         }
         
+        // Debug: Check what's in question.user
+        console.log("Question object:", JSON.stringify(question, null, 2));
+        console.log("Question user:", question.user);
+        console.log("Type of question.user:", typeof question.user);
+        
+        if(!question.user){
+            return next(new ErrorHandler("Question user not found" , 500))
+        }
+        
         const newAnswer:any={
-            user:req.user,
+            user: req.user?._id,
             answer,
         }
 
         question.questionReplies.push(newAnswer)
         await course?.save()
-  console.log("QUESTION:", question);
-console.log("QUESTION USER:", question.user);
-console.log("ALL QUESTIONS:", courseContent.questions);
 
-
-        if (req.user?._id.toString() === question.user._id.toString()) {
-            //notification
-        }else{
-            const data = {
-                name:question.user.name,
-                title:courseContent.title,
-            }
-            const html =await ejs.renderFile(path.join(__dirname,"../mails/question-reply.ejs"),data)
-
-            
-            try {
-                await sendMail({
-                    email:question.user.email,
-                    subject:"Question-reply",
-                    template:"question-reply.ejs",
-                    data,
-                })
-            } catch (error:any) {
-                return next(new ErrorHandler(error.message , 500))
-            }
-
-            console.log("QUESTION:", question);
-console.log("QUESTION USER:", question.user);
-console.log("ALL QUESTIONS:", courseContent.questions);
-
-
-            res.status(200).json({
-                success:true,
-                course
-            })
+        // Handle both old format (full object) and new format (ObjectId)
+        let questionUser;
+        let questionUserId;
+        
+        // Cast to any to check the actual runtime value
+        const userField: any = question.user;
+        
+        // Check if it's an ObjectId (string representation or ObjectId instance)
+        if (typeof userField === 'string' || userField instanceof mongoose.Types.ObjectId) {
+            // New format: user is stored as ObjectId
+            questionUserId = userField.toString();
+            questionUser = await userModel.findById(questionUserId);
+        } else if (userField && userField._id) {
+            // Old format: user is stored as full object
+            questionUserId = userField._id.toString();
+            questionUser = userField;
+        } else {
+            console.log("Unknown user format:", userField);
+            return next(new ErrorHandler("Invalid question user format" , 500))
         }
 
+        if(!questionUser){
+            return next(new ErrorHandler("Question user not found in database" , 500))
+        }
+
+        if (req.user?._id.toString() === questionUserId) {
+            //notification
+            console.log("Same user - no email sent")
+        } else {
+            const data = {
+                name: questionUser.name,
+                title: courseContent.title,
+            }
+
+            try {
+                await sendMail({
+                    email: questionUser.email,
+                    subject: "Question-reply",
+                    template: "question-reply.ejs",
+                    data,
+                })
+                console.log("Email sent successfully to:", questionUser.email);
+            } catch (error:any) {
+                console.log("Email sending error:", error);
+                return next(new ErrorHandler(error.message , 500))
+            }
+        }
+
+        res.status(200).json({
+            success: true,
+            course
+        })
+
     } catch (error:any) {
+        console.log("Full error:", error);
         return next(new ErrorHandler(error.message , 500))
     }
 })
