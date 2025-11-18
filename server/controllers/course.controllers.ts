@@ -245,7 +245,7 @@ export const addAnswer = CatchAsyncError(async(req:Request,res:Response,next:Nex
         }
 
         if(!mongoose.Types.ObjectId.isValid(contentId)){
-            return next(new ErrorHandler("Invalid Content id" , 400))
+            return next(new ErrorHandler("Invalid Content Id" , 400))
         }
 
         const courseContent = course?.courseData?.find((item:any)=>item._id.equals(contentId))
