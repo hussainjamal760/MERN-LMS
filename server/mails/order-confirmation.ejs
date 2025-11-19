@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>SheepAcademy - Order Confirmation</title>
+    <style>
+        body {
+            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            background-color: #f0f2f5;
+            margin: 0;
+            padding: 0;
+        }
+
+        .email-container {
+            max-width: 650px;
+            margin: 30px auto;
+            background-color: #ffffff;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+        }
+
+        .header {
+            background-color: #8a4ced;
+            color: white;
+            text-align: center;
+            padding: 25px 20px;
+        }
+
+        .header h1 {
+            margin: 0;
+            font-size: 28px;
+            letter-spacing: 1px;
+        }
+
+        .header p {
+            margin: 5px 0 0;
+            font-size: 16px;
+            opacity: 0.9;
+        }
+
+        .content {
+            background-color: #ad87e9;
+            padding: 30px 25px;
+        }
+
+        .greeting {
+            font-size: 16px;
+            margin-bottom: 20px;
+        }
+
+        .order-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 30px;
+        }
+
+        .order-table th, .order-table td {
+            text-align: left;
+            padding: 12px 15px;
+        }
+
+        .order-table th {
+            background-color: #f7f7f7;
+            font-weight: 600;
+        }
+
+        .order-table tr:nth-child(even) td {
+            background-color: #f9f9f9;
+        }
+
+        .summary {
+            text-align: right;
+            font-size: 16px;
+            margin-bottom: 30px;
+        }
+
+        .summary p {
+            margin: 5px 0;
+        }
+
+        .summary p.total {
+            font-weight: 700;
+            font-size: 18px;
+            color: #2a33df;
+        }
+
+        .cta-button {
+            display: inline-block;
+            padding: 12px 25px;
+            background-color: #f7f7f7;
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+
+        .footer {
+            text-align: center;
+            padding: 20px 15px;
+            font-size: 12px;
+            color: #999999;
+            border-top: 1px solid #eaeaea;
+        }
+
+        .footer a {
+            color: #8a4ced;
+            text-decoration: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="email-container">
+        <div class="header">
+            <h1>SheepAcademy</h1>
+            <p>Order Confirmation Receipt</p>
+        </div>
+
+        <div class="content">
+            <p class="greeting">Hi there,</p>
+            <p>Thank you for your purchase! Here are the details of your order:</p>
+
+            <table class="order-table">
+                <tr>
+                    <th>Order ID</th>
+                    <td><%= order._id %></td>
+                </tr>
+                <tr>
+                    <th>Course Name</th>
+                    <td><%= order.name %></td>
+                </tr>
+                <tr>
+                    <th>Order Date</th>
+                    <td><%= order.date %></td>
+                </tr>
+                <tr>
+                    <th>Price</th>
+                    <td>$<%= order.price.toFixed(2) %></td>
+                </tr>
+            </table>
+
+            <div class="summary">
+                <p>Subtotal: $<%= order.price.toFixed(2) %></p>
+                <p class="total">Total: $<%= order.price.toFixed(2) %></p>
+            </div>
+
+            <div style="text-align:center;">
+                <a href="https://sheepacademy.com/my-courses" class="cta-button">Go to My Courses</a>
+            </div>
+
+            <p>If you have any questions, feel free to contact us at <a href="mailto:support@sheepacademy.com">support@sheepacademy.com</a>.</p>
+        </div>
+
+        <div class="footer">
+            <p>© <%= new Date().getFullYear() %> SheepAcademy. All rights reserved.</p>
+            <p><a href="https://sheepacademy.com">Visit SheepAcademy</a></p>
+        </div>
+    </div>
+</body>
+</html>
