@@ -10,6 +10,7 @@ import path from 'path'
 import ejs from 'ejs'
 import sendMail from '../utils/sendMail'
 import userModel from '../models/user.model'
+import NotificationModel from '../models/notification.model'
 
 
 
@@ -195,8 +196,13 @@ export const addQuestion = CatchAsyncError(async(req:Request,res:Response,next:N
        
         courseContent.questions.push(newQuestion as any)
 
+        await NotificationModel.create({
+            user:req.user?._id,
+            title:"New question received",
+            message:`You have a new question in ${courseContent.title}`,
+        })
 
-        await course.save()
+        await course?.save()
 
 
         // Fetch fresh to verify
@@ -282,7 +288,11 @@ export const addAnswer = CatchAsyncError(async(req:Request,res:Response,next:Nex
         }
 
         if (req.user?._id.toString() === questionUserId) {
-            //notification
+            await NotificationModel.create({
+            user:req.user?._id,
+            title:"New question reply received",
+            message:`You have a new question reply in ${courseContent.title}`,
+        })
         } else {
             const data = {
                 name: questionUser.name,
