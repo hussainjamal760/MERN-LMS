@@ -1,15 +1,23 @@
 @import "tailwindcss";
 
+@theme {
+  /* Font families */
+  --font-family-poppins: var(--font-Poppins);
+  --font-family-josefin: var(--font-Josefin);
+
+  /* Custom screens */
+  --breakpoint-400px: 400px;
+  --breakpoint-800px: 800px;
+  --breakpoint-1000px: 1000px;
+  --breakpoint-1100px: 1100px;
+  --breakpoint-1200px: 1200px;
+  --breakpoint-1300px: 1300px;
+  --breakpoint-1500px: 1500px;
+}
+
 :root {
   --background: #ffffff;
   --foreground: #171717;
-}
-
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
 }
 
 @media (prefers-color-scheme: dark) {
