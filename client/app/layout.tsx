@@ -25,18 +25,17 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <body 
         suppressHydrationWarning
-        className={`${poppins.variable} ${josefin.variable} 
-        !bg-white bg-no-repeat 
-        dark:bg-gradient-to-b dark:from-gray-900 dark:to-black 
-        duration-300`}
+        className={`${poppins.variable} ${josefin.variable}`}
       >
         <ThemeProvider 
           attribute="class" 
-          defaultTheme="system" 
-          enableSystem 
+          defaultTheme="system"
+          enableSystem
           disableTransitionOnChange
         >
-          {children}
+          <div className="min-h-screen bg-white dark:bg-gradient-to-b dark:from-gray-900 dark:to-black duration-300">
+            {children}
+          </div>
         </ThemeProvider>
       </body>
     </html>
