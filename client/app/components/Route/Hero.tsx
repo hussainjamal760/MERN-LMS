@@ -28,7 +28,7 @@ const Hero: FC<Props> = (props) => {
         {/* RIGHT SIDE: Content */}
         <div className="w-full md:w-[50%] flex flex-col items-start text-center md:text-left mt-10 md:mt-0">
           <h2 className="text-[30px] md:text-[60px] font-[500] font-[family:var(--font-family-josefin)] text-[#000000c7] dark:text-white leading-[1.2]">
-            Improve Your Online Learning Experience Better Instantly
+            Sheep Academy: Learn Smarter, Anytime, Anywhere
           </h2>
           
           <p className="mt-4 text-[18px] font-[family:var(--font-family-poppins)] font-[400] text-[#000000ac] dark:text-[#edfff4]">

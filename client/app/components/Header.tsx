@@ -4,6 +4,7 @@ import React, { FC, useState, useEffect } from "react";
 import NavItems from "../utils/NavItems";
 import ThemeSwitcher from "../utils/ThemeSwitcher";
 import { HiOutlineMenuAlt3, HiOutlineUserCircle } from "react-icons/hi";
+import Image from "next/image";
 
 type Props = {
   open: boolean;
@@ -45,12 +46,18 @@ const Header: FC<Props> = ({ open, setOpen, activeItem }) => {
       >
         <div className="w-[95%] md:w-[92%] m-auto py-2 h-full">
           <div className="w-full flex items-center justify-between p-3 h-[80px]">
+            
             <div>
-              <Link
-                href="/"
-                className="text-[25px] font-[family:var(--font-family-poppins)] font-[500] text-black dark:text-white"
-              >
-                Sheep Academy
+              <Link href="/">
+               
+                <Image
+                  src="/logo.png" 
+                  alt="Sheep Academy Logo"
+                  width={150} 
+                  height={40}
+                  className="cursor-pointer object-contain" 
+                  priority 
+                />
               </Link>
             </div>
 
@@ -72,14 +79,22 @@ const Header: FC<Props> = ({ open, setOpen, activeItem }) => {
             </div>
           </div>
         </div>
-{openSidebar && (
-  <div className="fixed w-full h-screen top-0 left-0 z-[9999] dark:bg-[unset] bg-[#00000024]" onClick={handleClose} id="screen">
-    <div className="w-[70%] fixed z-[999999] h-screen bg-white dark:bg-slate-900 dark:bg-opacity-90 top-0 right-0">
-      <Link href='/'>
-        <span className="text-[25px] font-[family:var(--font-family-poppins)] font-[500] text-black dark:text-white ml-5 my-4">
-          Sheep Academy
-        </span>
-      </Link>
+        
+        
+        {openSidebar && (
+          <div className="fixed w-full h-screen top-0 left-0 z-[9999] dark:bg-[unset] bg-[#00000024]" onClick={handleClose} id="screen">
+            <div className="w-[70%] fixed z-[999999] h-screen bg-white dark:bg-slate-900 dark:bg-opacity-90 top-0 right-0">
+              
+              <Link href='/'>
+=                 <Image
+                  src="/logo.png"
+                  alt="Sheep Academy Logo"
+                  width={120} 
+                  height={35}
+                  className="cursor-pointer ml-5 my-4 object-contain"
+                />
+              </Link>
+
               <NavItems activeItem={activeItem} isMobile={true}/>
               <HiOutlineUserCircle
               size={25}
