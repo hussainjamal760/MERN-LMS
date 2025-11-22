@@ -41,7 +41,7 @@ const Header: FC<Props> = ({ open, setOpen, activeItem }) => {
             <div>
               <Link
                 href="/"
-                className="text-[25px] font-Popins font-[500] text-black dark:text-white"
+                className="text-[25px] font-[family:var(--font-family-poppins)] font-[500] text-black dark:text-white"
               >
                 Sheep Academy
               </Link>
