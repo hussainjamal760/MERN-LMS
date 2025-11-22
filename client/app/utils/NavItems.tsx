@@ -37,8 +37,7 @@ const NavItems: React.FC<Props> = ({ activeItem, isMobile }) => {
       </div>
 
       {isMobile && (
-        <div className="800px:hidden mt-5">
-          <div className="w-full text-center py-6">
+        <div className="md:hidden mt-5">
             {navItemsData &&
               navItemsData.map((i, index) => {
                 return (
@@ -56,7 +55,6 @@ const NavItems: React.FC<Props> = ({ activeItem, isMobile }) => {
                 );
               })}
           </div>
-        </div>
       )}
     </>
   );
