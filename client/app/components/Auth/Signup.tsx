@@ -9,6 +9,8 @@ import {
 } from "react-icons/ai";
 import { FcGoogle } from "react-icons/fc";
 import Lottie from "lottie-react";
+import { useRegisterMutation } from "@/redux/auth/authapi";
+import toast from "react-hot-toast";
 
 type Props = {
   setRoute: (route: string) => void;
@@ -26,6 +28,21 @@ const schema = Yup.object().shape({
 const Signup: FC<Props> = ({ setRoute, setOpen }) => {
   const [show, setShow] = useState(false);
   const [animationData, setAnimationData] = useState<any>(null);
+  const [register , {data,error,isSuccess}] = useRegisterMutation()
+  
+  useEffect(()=>{
+    if(isSuccess){
+        const message = data?.message || "Registration Successfull";
+        toast.success(message);
+        setRoute("Verification")
+    }
+    if(error){
+        if("data" in error){
+            const errorData = error as any;
+            toast.error(errorData.data.message)
+        }
+    }
+  },[isSuccess,error])
 
   useEffect(() => {
     fetch("/sign.json")
@@ -42,8 +59,9 @@ const Signup: FC<Props> = ({ setRoute, setOpen }) => {
   const formik = useFormik({
     initialValues: { name:"" ,email: "", password: "" },
     validationSchema: schema,
-    onSubmit: async ({name, email, password }) => {
-      setRoute("Verification")
+    onSubmit: async ({ email, password }) => {
+      const data = { name , email , password}
+      await register(data)
     },
   });
 
@@ -55,7 +73,6 @@ const Signup: FC<Props> = ({ setRoute, setOpen }) => {
         Sign-Up with Sheep Academy
       </h1>
       
-      {/* Reduced gap from 5 to 2 */}
       <div className="flex flex-col min-[900px]:flex-row items-center justify-center gap-2">
         
         <div className="hidden min-[900px]:flex w-full min-[900px]:w-[50%] justify-center items-center">
@@ -68,9 +85,7 @@ const Signup: FC<Props> = ({ setRoute, setOpen }) => {
           )}
         </div>
 
-        {/* Reduced padding from p-4 to p-2 */}
         <div className="w-full min-[900px]:w-[50%] p-2">
-          {/* Reduced gap from 4 to 2 */}
           <form onSubmit={handleSubmit} className="flex flex-col gap-2">
             
             <div className="w-full relative">
@@ -84,7 +99,6 @@ const Signup: FC<Props> = ({ setRoute, setOpen }) => {
                 onChange={handleChange}
                 id="name"
                 placeholder="Black Sheep"
-                // Reduced mt-[10px] to mt-1
                 className={`${
                   errors.name && touched.name && "border-red-500"
                 } w-full text-black dark:text-white bg-transparent border rounded h-[40px] px-2 outline-none mt-1 font-Poppins`}
