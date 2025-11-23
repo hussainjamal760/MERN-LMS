@@ -5,14 +5,17 @@ import NavItems from "../utils/NavItems";
 import ThemeSwitcher from "../utils/ThemeSwitcher";
 import { HiOutlineMenuAlt3, HiOutlineUserCircle } from "react-icons/hi";
 import Image from "next/image";
+import CustomModel from "../utils/CustomModel";
 
 type Props = {
   open: boolean;
   setOpen: (open: boolean) => void;
   activeItem: number;
+  route:string,
+  setRoute : (route:string)=>void
 };
 
-const Header: FC<Props> = ({ open, setOpen, activeItem }) => {
+const Header: FC<Props> = ({ open, setOpen, activeItem ,route, setRoute }) => {
   const [active, setActive] = useState(false);
   const [openSidebar, setOpenSidebar] = useState(false);
 
@@ -107,6 +110,19 @@ const Header: FC<Props> = ({ open, setOpen, activeItem }) => {
         )}
 
       </div>
+      {
+        route === "Login" && (
+          <>
+          <CustomModel
+          open={open}
+          setOpen = {setOpen}
+          setRoute={setRoute}
+          activeItem={activeItem}
+          component={Login}
+          />
+          </>
+        )
+      }
     </div>
   );
 };
