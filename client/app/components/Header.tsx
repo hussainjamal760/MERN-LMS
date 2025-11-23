@@ -6,7 +6,7 @@ import ThemeSwitcher from "../utils/ThemeSwitcher";
 import { HiOutlineMenuAlt3, HiOutlineUserCircle } from "react-icons/hi";
 import Image from "next/image";
 import CustomModel from "../utils/CustomModel";
-
+import Login from "./Auth/Login"
 type Props = {
   open: boolean;
   setOpen: (open: boolean) => void;
@@ -115,6 +115,7 @@ const Header: FC<Props> = ({ open, setOpen, activeItem ,route, setRoute }) => {
           <>
           <CustomModel
           open={open}
+          route={route}
           setOpen = {setOpen}
           setRoute={setRoute}
           activeItem={activeItem}
