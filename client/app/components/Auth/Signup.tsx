@@ -16,18 +16,19 @@ type Props = {
 };
 
 const schema = Yup.object().shape({
+    name:Yup.string().required("Please enter your name!"),
   email: Yup.string()
     .email("Invalid email!")
     .required("Please enter your email!"),
   password: Yup.string().required("Please enter your password!"),
 });
 
-const Login: FC<Props> = ({ setRoute, setOpen }) => {
+const Signup: FC<Props> = ({ setRoute, setOpen }) => {
   const [show, setShow] = useState(false);
   const [animationData, setAnimationData] = useState<any>(null);
 
   useEffect(() => {
-    fetch("/Login.json")
+    fetch("/sign.json")
       .then((response) => {
         if (!response.ok) {
           throw new Error("Network response was not ok");
@@ -39,10 +40,10 @@ const Login: FC<Props> = ({ setRoute, setOpen }) => {
   }, []);
 
   const formik = useFormik({
-    initialValues: { email: "", password: "" },
+    initialValues: { name:"" ,email: "", password: "" },
     validationSchema: schema,
-    onSubmit: async ({ email, password }) => {
-      console.log(email, password);
+    onSubmit: async ({name, email, password }) => {
+      console.log(name, email, password);
     },
   });
 
@@ -51,10 +52,11 @@ const Login: FC<Props> = ({ setRoute, setOpen }) => {
   return (
     <div className="w-full">
       <h1 className="text-[25px] text-black dark:text-white font-[500] font-Poppins text-center py-2">
-        Login with Sheep Academy
+        Sign-Up with Sheep Academy
       </h1>
       
-      <div className="flex flex-col min-[900px]:flex-row items-center justify-center gap-5">
+      {/* Reduced gap from 5 to 2 */}
+      <div className="flex flex-col min-[900px]:flex-row items-center justify-center gap-2">
         
         <div className="hidden min-[900px]:flex w-full min-[900px]:w-[50%] justify-center items-center">
           {animationData ? (
@@ -66,9 +68,32 @@ const Login: FC<Props> = ({ setRoute, setOpen }) => {
           )}
         </div>
 
-        <div className="w-full min-[900px]:w-[50%] p-4">
-          <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+        {/* Reduced padding from p-4 to p-2 */}
+        <div className="w-full min-[900px]:w-[50%] p-2">
+          {/* Reduced gap from 4 to 2 */}
+          <form onSubmit={handleSubmit} className="flex flex-col gap-2">
             
+            <div className="w-full relative">
+              <label className="text-[16px] font-Poppins text-black dark:text-white" htmlFor="name">
+                Enter your name
+              </label>
+              <input
+                type="text"
+                name="name"
+                value={values.name}
+                onChange={handleChange}
+                id="name"
+                placeholder="Black Sheep"
+                // Reduced mt-[10px] to mt-1
+                className={`${
+                  errors.name && touched.name && "border-red-500"
+                } w-full text-black dark:text-white bg-transparent border rounded h-[40px] px-2 outline-none mt-1 font-Poppins`}
+              />
+              {errors.name && touched.name && (
+                <span className="text-red-500 pt-1 block text-sm">{errors.name}</span>
+              )}
+            </div>
+
             <div className="w-full relative">
               <label className="text-[16px] font-Poppins text-black dark:text-white" htmlFor="email">
                 Enter your Email
@@ -82,10 +107,10 @@ const Login: FC<Props> = ({ setRoute, setOpen }) => {
                 placeholder="loginmail@gmail.com"
                 className={`${
                   errors.email && touched.email && "border-red-500"
-                } w-full text-black dark:text-white bg-transparent border rounded h-[40px] px-2 outline-none mt-[10px] font-Poppins`}
+                } w-full text-black dark:text-white bg-transparent border rounded h-[40px] px-2 outline-none mt-1 font-Poppins`}
               />
               {errors.email && touched.email && (
-                <span className="text-red-500 pt-2 block text-sm">{errors.email}</span>
+                <span className="text-red-500 pt-1 block text-sm">{errors.email}</span>
               )}
             </div>
 
@@ -102,7 +127,7 @@ const Login: FC<Props> = ({ setRoute, setOpen }) => {
                 placeholder="password!@%"
                 className={`${
                   errors.password && touched.password && "border-red-500"
-                } w-full text-black dark:text-white bg-transparent border rounded h-[40px] px-2 outline-none mt-[10px] font-Poppins`}
+                } w-full text-black dark:text-white bg-transparent border rounded h-[40px] px-2 outline-none mt-1 font-Poppins`}
               />
               {!show ? (
                 <AiOutlineEyeInvisible
@@ -118,37 +143,40 @@ const Login: FC<Props> = ({ setRoute, setOpen }) => {
                 />
               )}
               {errors.password && touched.password && (
-                <span className="text-red-500 pt-2 block text-sm">{errors.password}</span>
+                <span className="text-red-500 pt-1 block text-sm">{errors.password}</span>
               )}
             </div>
 
-            <div className="w-full mt-5">
+            
+
+            <div className="w-full mt-2">
               <input
                 type="submit"
-                value="Login"
+                value="Sign up"
                 className="flex flex-row justify-center items-center py-3 px-6 rounded-full cursor-pointer bg-[#2190ff] min-h-[45px] w-full text-[16px] font-[600] font-Poppins text-white"
               />
             </div>
 
-              <h5 className="text-center pt-4 font-Poppins text-[14px] text-black dark:text-white">
-              Not have any account?{" "}
+              <h5 className="text-center font-Poppins text-[14px] text-black dark:text-white">
+              Already have any account?{" "}
               <span
                 className="text-[#2190ff] pl-1 cursor-pointer"
-                onClick={() => setRoute("Sign-Up")}
+                onClick={() => setRoute("Login")}
               >
-                Sign up
+                Sign in
               </span>
             </h5>
+
             
-            <h5 className="text-center pt-4 font-Poppins text-[14px] text-black dark:text-white">
+            <h5 className="text-center font-Poppins text-[14px] text-black dark:text-white mt-2">
               Or join with
             </h5>
-            <div className="flex items-center justify-center my-3 gap-4">
+            <div className="flex items-center justify-center my-2 gap-4">
               <FcGoogle size={30} className="cursor-pointer" />
               <AiFillGithub size={30} className="cursor-pointer text-black dark:text-white" />
             </div>
 
-          
+           
           </form>
         </div>
       </div>
@@ -156,4 +184,4 @@ const Login: FC<Props> = ({ setRoute, setOpen }) => {
   );
 };
 
-export default Login;
+export default Signup;

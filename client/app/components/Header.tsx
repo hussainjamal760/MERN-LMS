@@ -7,6 +7,7 @@ import { HiOutlineMenuAlt3, HiOutlineUserCircle } from "react-icons/hi";
 import Image from "next/image";
 import CustomModel from "../utils/CustomModel";
 import Login from "./Auth/Login"
+import Signup from "./Auth/Signup"
 type Props = {
   open: boolean;
   setOpen: (open: boolean) => void;
@@ -120,6 +121,21 @@ const Header: FC<Props> = ({ open, setOpen, activeItem ,route, setRoute }) => {
           setRoute={setRoute}
           activeItem={activeItem}
           component={Login}
+          />
+          </>
+        )
+      }
+
+      {
+        route === "Sign-Up" && (
+          <>
+          <CustomModel
+          open={open}
+          route={route}
+          setOpen = {setOpen}
+          setRoute={setRoute}
+          activeItem={activeItem}
+          component={Signup}
           />
           </>
         )
