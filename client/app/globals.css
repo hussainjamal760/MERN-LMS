@@ -1,14 +1,11 @@
 @import "tailwindcss";
 
-/* 1. Define the custom variant for class-based dark mode in Tailwind v4 */
 @custom-variant dark (&:where(.dark, .dark *));
 
 @theme {
-  /* Font families */
   --font-family-poppins: var(--font-Poppins);
   --font-family-josefin: var(--font-Josefin);
 
-  /* Custom screens */
   --breakpoint-400px: 400px;
   --breakpoint-800px: 800px;
   --breakpoint-1000px: 1000px;
@@ -23,7 +20,6 @@
   --foreground: #171717;
 }
 
-/* 2. Change this from @media to a .dark selector so it responds to the class toggle */
 .dark {
   --background: #0a0a0a;
   --foreground: #ededed;
@@ -37,6 +33,12 @@ body {
 .hero_animation {
   background-image: linear-gradient(147.92deg, hsla(239, 76%, 53%, 0.456) 10.41%, hsla(0, 0%, 100%, 0) 89.25%);
   animation: changeBackgroundColor 8s infinite alternate;
+}
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button{
+  -webkit-appearance: none;
+  margin: 0;
 }
 
 @keyframes changeBackgroundColor {
@@ -58,4 +60,19 @@ body {
   83.33% {
     opacity: 0.4;
   }
+}
+
+/* Shake Animation for invalid OTP */
+@keyframes shake {
+  0% { transform: translateX(0); }
+  20% { transform: translateX(-2px); }
+  40% { transform: translateX(2px); }
+  60% { transform: translateX(-2px); }
+  80% { transform: translateX(2px); }
+  100% { transform: translateX(0); }
+}
+
+.shake {
+  animation: shake 0.5s ease-in-out;
+  border-color: red !important;
 }

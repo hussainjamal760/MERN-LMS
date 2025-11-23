@@ -8,6 +8,8 @@ import Image from "next/image";
 import CustomModel from "../utils/CustomModel";
 import Login from "./Auth/Login"
 import Signup from "./Auth/Signup"
+import Verification from "./Auth/Verification"
+
 type Props = {
   open: boolean;
   setOpen: (open: boolean) => void;
@@ -140,6 +142,22 @@ const Header: FC<Props> = ({ open, setOpen, activeItem ,route, setRoute }) => {
           </>
         )
       }
+
+      {
+        route === "Verification" && (
+          <>
+          <CustomModel
+          open={open}
+          route={route}
+          setOpen = {setOpen}
+          setRoute={setRoute}
+          activeItem={activeItem}
+          component={Verification}
+          />
+          </>
+        )
+      }
+
     </div>
   );
 };

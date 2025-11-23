@@ -3,7 +3,7 @@ import './globals.css';
 import { Poppins } from "next/font/google";
 import { Josefin_Sans } from "next/font/google";
 import { ThemeProvider } from "./utils/theme-provider";
-
+import {Toaster} from "react-hot-toast"
 const poppins = Poppins({
   subsets: ["latin"],
   weight: ["400", "500", "600", "700"],
@@ -36,6 +36,7 @@ export default function RootLayout({
           <div className="min-h-screen bg-white dark:bg-gradient-to-b dark:from-gray-900 dark:to-black duration-300">
             {children}
           </div>
+          <Toaster position='top-center' reverseOrder={false} />
         </ThemeProvider>
       </body>
     </html>
