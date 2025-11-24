@@ -34,7 +34,7 @@ const Login: FC<Props> = ({ setRoute, setOpen }) => {
     fetch("/Login.json")
       .then((response) => {
         if (!response.ok) {
-          throw new Error("Network response was not ok");
+          throw new Error("Network response was not Ok");
         }
         return response.json();
       })
