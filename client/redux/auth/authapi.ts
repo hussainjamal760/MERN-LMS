@@ -1,5 +1,5 @@
 import { apiSlice } from "../features/api/apiSlice";
-import { userRegistration } from "./authSlice";
+import { userLoggedIn, userRegistration } from "./authSlice";
 
 
 type RegistrationResponse = {
@@ -10,7 +10,7 @@ type RegistrationResponse = {
 type RegistrationData = {};
 
 export const authApi = apiSlice.injectEndpoints({
-    overrideExisting: true,
+  overrideExisting: true,
   endpoints: (builder) => ({
     register: builder.mutation<RegistrationResponse, RegistrationData>({
       query: (data) => ({
@@ -27,23 +27,67 @@ export const authApi = apiSlice.injectEndpoints({
               token: result.data.activationToken,
             })
           );
-        } catch (error: any) {
-          console.log("Registration failed:"); 
+        } catch (error) {
+          console.log("Registration failed:");
         }
       },
     }),
-    activation:builder.mutation({
-        query :({activation_token , activation_code})=>({
-            url:"activate-user",
-            method:"POST",
-            body:{
-                activation_token,
-                activation_code,
-            }
-        })
-    })
+
+    activation: builder.mutation({
+      query: ({ activation_token, activation_code }) => ({
+        url: "activate-user",
+        method: "POST",
+        body: {
+          activation_token,
+          activation_code,
+        },
+      }),
+    }),
+
+    login: builder.mutation({
+      query: ({ email, password }) => ({
+        url: "login",
+        method: "POST",
+        body: { email, password },
+        credentials: "include" as const,
+      }),
+      async onQueryStarted(arg, { queryFulfilled, dispatch }) {
+        try {
+          const result = await queryFulfilled;
+          dispatch(
+            userLoggedIn({
+              accessToken: result.data.activationToken,
+              user: result.data.user,
+            })
+          );
+        } catch (error) {
+          console.log("Login failed:");
+        }
+      },
+    }),
+     socialAuth: builder.mutation({
+      query: ({ email, name , avatar }) => ({
+        url: "social-auth",
+        method: "POST",
+        body: { email, name , avatar},
+        credentials: "include" as const,
+      }),
+      async onQueryStarted(arg, { queryFulfilled, dispatch }) {
+        try {
+          const result = await queryFulfilled;
+          dispatch(
+            userLoggedIn({
+              accessToken: result.data.activationToken,
+              user: result.data.user,
+            })
+          );
+        } catch (error) {
+          console.log("Login failed:");
+        }
+      },
+    }),
   }),
 });
 
 
-export const {useRegisterMutation , useActivationMutation} = authApi
+export const {useRegisterMutation , useActivationMutation , useLoginMutation , useSocialAuthMutation} = authApi

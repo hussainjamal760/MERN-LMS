@@ -9,6 +9,9 @@ import {
 } from "react-icons/ai";
 import { FcGoogle } from "react-icons/fc";
 import Lottie from "lottie-react";
+import { useLoginMutation } from "@/redux/auth/authapi";
+import toast from "react-hot-toast";
+import {signIn} from 'next-auth/react'
 
 type Props = {
   setRoute: (route: string) => void;
@@ -25,6 +28,7 @@ const schema = Yup.object().shape({
 const Login: FC<Props> = ({ setRoute, setOpen }) => {
   const [show, setShow] = useState(false);
   const [animationData, setAnimationData] = useState<any>(null);
+  const [login , {isSuccess , error}] = useLoginMutation();
 
   useEffect(() => {
     fetch("/Login.json")
@@ -42,9 +46,23 @@ const Login: FC<Props> = ({ setRoute, setOpen }) => {
     initialValues: { email: "", password: "" },
     validationSchema: schema,
     onSubmit: async ({ email, password }) => {
-      console.log(email, password);
+      await login ({email,password})
     },
   });
+
+  useEffect(() => {
+    if(isSuccess){
+      toast.success("Login Successfully!");
+      setOpen(false)
+    }
+    if(error){
+      if ("data" in error){
+        const errorData = error as any;
+        toast.error(errorData.data.message)
+      }
+    }
+  }, [isSuccess , error])
+  
 
   const { errors, touched, values, handleChange, handleSubmit } = formik;
 
@@ -144,8 +162,8 @@ const Login: FC<Props> = ({ setRoute, setOpen }) => {
               Or join with
             </h5>
             <div className="flex items-center justify-center my-3 gap-4">
-              <FcGoogle size={30} className="cursor-pointer" />
-              <AiFillGithub size={30} className="cursor-pointer text-black dark:text-white" />
+              <FcGoogle size={30} className="cursor-pointer" onClick={()=>signIn("google")} />
+              <AiFillGithub size={30} className="cursor-pointer text-black dark:text-white" onClick={()=>signIn("github")}/>
             </div>
 
           

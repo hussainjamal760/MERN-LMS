@@ -9,6 +9,11 @@ import CustomModel from "../utils/CustomModel";
 import Login from "./Auth/Login"
 import Signup from "./Auth/Signup"
 import Verification from "./Auth/Verification"
+import { useSelector } from "react-redux";
+import avatar from "../../public/avatar.png"
+import { useSession } from "next-auth/react";
+import { useSocialAuthMutation } from "@/redux/auth/authapi";
+import toast from "react-hot-toast";
 
 type Props = {
   open: boolean;
@@ -21,6 +26,24 @@ type Props = {
 const Header: FC<Props> = ({ open, setOpen, activeItem ,route, setRoute }) => {
   const [active, setActive] = useState(false);
   const [openSidebar, setOpenSidebar] = useState(false);
+  const {user} = useSelector((state:any) => state.auth)
+  const {data} = useSession();
+  const [socialAuth , {isSuccess , error}] = useSocialAuthMutation();
+
+  useEffect(()=>{
+    if(!user){
+      if(data){
+        socialAuth({
+          email:data?.user?.email,
+          name:data?.user?.name,
+          avatar:data?.user?.image
+        })
+      }
+    }
+    if(isSuccess){
+      toast.success("Login successfull")
+    }
+  }, [data,user])
 
   const handleClose=(e:any)=>{
     if(e.target.id === "screen"){
@@ -77,11 +100,28 @@ const Header: FC<Props> = ({ open, setOpen, activeItem ,route, setRoute }) => {
               onClick={()=>setOpenSidebar(true)}
               />
             </div>
-            <HiOutlineUserCircle
+
+            {
+              user ? (
+                <Link href={"/profile"}>
+                  <Image
+                    src={user?.avatar && user.avatar !== "" ? user.avatar : avatar}
+                  alt="profile"
+                  width={30}
+                  height={30}
+                  className="w-[30px] h-[30px] rounded-full cursor-pointer"
+                  />
+                </Link>
+              ) : 
+              
+              (  <HiOutlineUserCircle
             size={25}
             className=" hidden md:block cursor-pointer dark:text-white text-black"
             onClick={()=>setOpen(true)}
-            />
+            />)
+
+            }
+          
             </div>
           </div>
         </div>
