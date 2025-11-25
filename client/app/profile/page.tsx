@@ -3,19 +3,23 @@ import React, { FC, useState } from 'react'
 import Protected from '../hooks/useProtected'
 import Heading from '../utils/Heading'
 import Header from '../components/Header'
+import Profile from '../components/Profile/Profile'
+import { useSelector } from 'react-redux'
 
-type Props = {}
+type Props = {
+}
 
 const page:FC<Props> = (props) => {
     const [open, setOpen] = useState(false)
       const [activeItem, setActiveItem] = useState(0)
       const [route, setRoute] = useState("Login")
+      const {user} = useSelector((state:any)=> state.auth)
     
   return (
     <>
         <Protected>
  <Heading
-        title="Sheep-Academy"
+        title={`${user?.name} profile`}
         description="Sheep Academy – Learn Anything, Anytime
 Sheep Academy is a modern LMS platform where students can learn through high-quality video courses, quizzes, and assignments. Instructors can create, manage, and sell their courses just like on Udemy. With a fast, secure, and user-friendly interface, Sheep Academy delivers the best online learning experience."
         keywords="online learning platform
@@ -61,6 +65,7 @@ course management system"
       route={route}
       setRoute={setRoute}
       />
+      <Profile user={user}/>
         </Protected>
     </>
   )
