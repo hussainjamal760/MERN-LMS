@@ -4,28 +4,23 @@ import Link from "next/link";
 import Image from "next/image";
 import { BiSearch } from "react-icons/bi";
 import Lottie from "lottie-react";
-// Adjust this import path based on where you saved the json file
 import animationData from "../../../public/hero-img.json"; 
-import usersData from "../../../public/window.svg"; 
 
 type Props = {};
 
 const Hero: FC<Props> = (props) => {
   return (
     <div className="w-full flex items-center min-h-[calc(100vh-80px)]">
-      {/* Background blob animation from globals.css - positioned absolutely */}
       <div className="absolute top-[100px] left-[50px] w-[400px] h-[400px] hero_animation rounded-[50%] blur-[120px] z-[1]" />
 
       <div className="w-[95%] md:w-[92%] m-auto flex flex-col md:flex-row items-center justify-between z-[10] relative">
         
-        {/* LEFT SIDE: Hero Image (Lottie) */}
         <div className="w-full md:w-[50%] flex justify-center items-center pt-10 md:pt-0">
           <div className="w-[300px] h-[300px] md:w-[500px] md:h-[500px]">
             <Lottie animationData={animationData} loop={true} />
           </div>
         </div>
 
-        {/* RIGHT SIDE: Content */}
         <div className="w-full md:w-[50%] flex flex-col items-start text-center md:text-left mt-10 md:mt-0">
           <h2 className="text-[30px] md:text-[60px] font-[500] font-[family:var(--font-family-josefin)] text-[#000000c7] dark:text-white leading-[1.2]">
             Sheep Academy: Learn Smarter, Anytime, Anywhere
@@ -36,7 +31,6 @@ const Hero: FC<Props> = (props) => {
             your desired course from them.
           </p>
 
-          {/* Search Bar */}
           <div className="w-full mt-8 relative">
             <input
               type="search"
@@ -48,10 +42,8 @@ const Hero: FC<Props> = (props) => {
             </div>
           </div>
 
-          {/* Reviews / Social Proof */}
           <div className="w-full flex items-center mt-10 justify-center md:justify-start">
             <div className="flex -space-x-4">
-              {/* Replace these with your actual avatar images */}
               <Image
                 src="/user1.jpg"
                 alt="student"
