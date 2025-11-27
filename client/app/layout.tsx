@@ -8,6 +8,7 @@ import {Providers} from "../Provider"
 import { SessionProvider } from 'next-auth/react';
 import { useLoadUserQuery } from '@/redux/features/api/apiSlice';
 import Loader from './components/Loader/Loader';
+import React, { useState, useEffect } from 'react';
 
 const poppins = Poppins({
   subsets: ["latin"],
@@ -34,19 +35,19 @@ export default function RootLayout({
       >
         <Providers>
           <SessionProvider>
-        <ThemeProvider 
-          attribute="class" 
-          defaultTheme="system"
-          enableSystem
-          disableTransitionOnChange
-        >
-          <div className="min-h-screen bg-white dark:bg-gradient-to-b dark:from-gray-900 dark:to-black duration-300">
-          <Custom> {children} </Custom>  
-          </div>
-          <Toaster position='top-center' reverseOrder={false} />
-        </ThemeProvider>
+            <ThemeProvider 
+              attribute="class" 
+              defaultTheme="system"
+              enableSystem
+              disableTransitionOnChange
+            >
+              <div className="min-h-screen bg-white dark:bg-gradient-to-b dark:from-gray-900 dark:to-black duration-300">
+                <Custom> {children} </Custom>  
+              </div>
+              <Toaster position='top-center' reverseOrder={false} />
+            </ThemeProvider>
           </SessionProvider>
-      </Providers>
+        </Providers>
       </body>
     </html>
   );
@@ -54,11 +55,21 @@ export default function RootLayout({
 
 const Custom : React.FC<{children : React.ReactNode}> = ({children})=>{
   const {isLoading} = useLoadUserQuery({})
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  if (!mounted) {
+    return <>{children}</>;
+  }
+
   return(
     <>
-    {
-      isLoading ? <Loader/> : <>{children}</>
-    }
+      {
+        isLoading ? <Loader/> : <>{children}</>
+      }
     </>
   )
 }

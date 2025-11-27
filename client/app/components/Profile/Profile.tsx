@@ -5,6 +5,7 @@ import SideBarProfile from './SideBarProfile';
 import { useLogOutQuery } from '@/redux/auth/authapi';
 import { signOut } from 'next-auth/react';
 import { redirect } from 'next/navigation';
+import ProfileInfo from './ProfileInfo';
 
 type Props = {
     user: any
@@ -22,8 +23,8 @@ const Profile: FC<Props> = ({ user }) => {
 
     const logoutHandler = async () => {
       signOut()
-     await setLogout(true)
-      redirect('/')  
+       await setLogout(true)
+  
     }
 
     if (typeof window !== "undefined") {
@@ -49,7 +50,7 @@ const Profile: FC<Props> = ({ user }) => {
             </div>
             
             <div className="flex-1 p-6 bg-white dark:bg-gray-800 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700">
-                {active === 1 && <h1 className="text-3xl font-bold dark:text-white">Account Details Display Area</h1>}
+                {active === 1 && <h1 className="text-3xl font-bold dark:text-white"><ProfileInfo avatar={avatar} user={user}/></h1>}
                 {active === 2 && <h1 className="text-3xl font-bold dark:text-white">Change Password Form</h1>}
                 {active === 3 && <h1 className="text-3xl font-bold dark:text-white">User Enrolled Courses List</h1>}
             </div>

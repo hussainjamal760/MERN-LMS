@@ -18,6 +18,7 @@ const SideBarProfile: FC<Props> = ({ user, active, avatar, setActive, logoutHand
     const menuItemClasses = "w-full flex items-center px-4 py-3 cursor-pointer transition-all duration-300 rounded-lg mb-3 hover:bg-gray-100 dark:hover:bg-slate-700";
     
     const iconColor = "#8C8C8C"; 
+    
 
     return (
         <div className="w-[280px] p-4 bg-white dark:bg-gray-800 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700">
