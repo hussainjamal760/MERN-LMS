@@ -52,7 +52,7 @@ const ProfileInfo: FC<Props> = ({ avatar, user }) => {
     const handleSubmit =async (e:any) => {
         e.preventDefault();
         if(name !== ""){
-            editProfile({
+            await editProfile({
                 name:name,
                 email:user.email
             })
