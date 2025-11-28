@@ -3,8 +3,10 @@ import Image from 'next/image';
 import React, { FC } from 'react'
 import avatarDefault from "../../../public/avatar.png"
 import { RiLockPasswordLine } from "react-icons/ri"
+import { MdOutlineAdminPanelSettings } from "react-icons/md"
 import { SiCoursera } from "react-icons/si"
 import { AiOutlineLogout } from "react-icons/ai"
+import Link from 'next/link';
 
 type Props = {
     user: any;
@@ -28,7 +30,7 @@ const SideBarProfile: FC<Props> = ({ user, active, avatar, setActive, logoutHand
                 onClick={() => setActive(1)}
             >
                 <Image 
-                    src={user.avatar.url || avatar ? user.avatar.url || avatar : avatarDefault} 
+                    src={user.avatar || avatar ? user.avatar.url || avatar : avatarDefault} 
                     alt='avatar' 
                     width={40} 
                     height={40}
@@ -58,6 +60,16 @@ const SideBarProfile: FC<Props> = ({ user, active, avatar, setActive, logoutHand
                     Enrolled Courses
                 </h5>
             </div>
+
+              {user.role === "admin" && <Link 
+              href={"/admin"}
+                className={`${menuItemClasses} ${active === 6 ? "bg-gray-100 dark:bg-slate-700 font-medium" : ""}`} 
+            >
+                <MdOutlineAdminPanelSettings size={24} className={`mr-4 ${active === 6 ? "text-blue-500 dark:text-blue-400" : "text-gray-500 dark:text-gray-400"}`} />
+                <h5 className={`${active === 6 ? "text-blue-500 dark:text-blue-400" : "text-gray-700 dark:text-gray-200"}`}>
+                    Admin Dashboard
+                </h5>
+            </Link>}
 
             <div 
                 className={`${menuItemClasses} mt-8 border-t pt-4 border-gray-200 dark:border-gray-700 !mb-0 text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20`} 
