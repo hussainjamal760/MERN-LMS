@@ -4,6 +4,7 @@ import { useState } from "react"
 import CourseInformation from "./CourseInformation"
 import CourseOptions from "./CourseOptions"
 import CourseData from "./CourseData"
+import CourseContent from "./CourseContent"
 
 
 type Props = {}
@@ -40,6 +41,37 @@ const CreateCourse = (props: Props) => {
     ])
 
     const [courseData, setCourseData] = useState({})
+
+   const handleSubmit = async () => {
+    const formattedBenefits = benefits.map((benefit) => ({
+      title: benefit.title,
+    }));
+
+    const formattedPrerequisites = prerequisites.map((prerequisite) => ({
+      title: prerequisite.title,
+    }));
+
+    const data = {
+      name: courseInfo.name,
+      description: courseInfo.description,
+      price: courseInfo.price,
+      estimatedPrice: courseInfo.estimatedPrice,
+      tags: courseInfo.tags,
+      thumbnail: courseInfo.thumbnail,
+      level: courseInfo.level,
+      demoUrl: courseInfo.demoUrl,
+      totalVideos: courseContentData.length,
+      benefits: formattedBenefits,
+      prerequisites: formattedPrerequisites,
+      courseData: courseContentData, 
+    }
+    setCourseData(data)
+  };
+
+  console.log(courseData);
+  
+
+
   return (
         <div className="w-full flex min-h-screen">
             <div className="w-[80%]">
@@ -66,11 +98,24 @@ const CreateCourse = (props: Props) => {
                         />
                     )
                 }
+
+                 {
+                     active === 2 && (
+                        <CourseContent
+                        active={active}
+                        setActive={setActive}
+                        setCourseContentData={setCourseContentData}
+                        courseContentData = {courseContentData}
+                        handleSubmit={handleSubmit}
+                        />
+                    )
+                }
             </div>
 <div className="w-[20%] mt-[100px] h-screen fixed z-[50] top-18 right-0">                <CourseOptions active={active}  setActive={setActive}/>
             </div>
         </div>
     )
 }
+
 
 export default CreateCourse
