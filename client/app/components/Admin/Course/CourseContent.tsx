@@ -98,7 +98,6 @@ const CourseContent: FC<Props> = ({
         videoUrl: "",
         title: "",
         description: "",
-        // FIX: Variable use karein taake updated value mile
         videoSection: `Untitled Section ${nextSection}`,
         links: [{ title: "", url: "" }],
       };
@@ -151,7 +150,6 @@ const CourseContent: FC<Props> = ({
                           : "w-full"
                       } font-Poppins cursor-pointer dark:text-white text-black bg-transparent outline-none placeholder-gray-400`}
                       
-                      // FIX: Agar value empty hai aur yeh pehla item hai, to default show karein
                       value={item.videoSection || (index === 0 ? "Untitled Section 1" : item.videoSection)}
                       
                       onChange={(e) => {
