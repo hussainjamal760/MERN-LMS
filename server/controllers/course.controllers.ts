@@ -11,6 +11,7 @@ import ejs from 'ejs'
 import sendMail from '../utils/sendMail'
 import userModel from '../models/user.model'
 import NotificationModel from '../models/notification.model'
+import axios from 'axios'
 
 
 
@@ -462,3 +463,58 @@ export const deleteCourse = CatchAsyncError(
         }
     }
 )
+
+
+// generate video url
+export const generateVideoUrl = CatchAsyncError(async(req:Request, res:Response, next:NextFunction) => {
+    try {
+        // --- Added Log for Debugging Input ---
+        const {videoId} = req.body;
+        console.log(`[VdoCipher API] Request received for video ID: ${videoId}`);
+        console.log(`[VdoCipher API] Using Secret: ${process.env.VDOCIPHER_API_SECRET ? 'Loaded' : '!!! MISSING / UNDEFINED !!!'}`);
+        // -------------------------------------
+
+        const response = await axios.post(
+            `https://dev.vdocipher.com/api/videos/${videoId}/otp`,
+            { ttl: 300 },
+            {
+                headers: {
+                    Accept: 'application/json',
+                    'Content-Type': 'application/json',
+                    Authorization: `Apisecret ${process.env.VDOCIPHER_API_SECRET}`,
+                },
+            }
+        );
+
+        res.json(response.data);
+    } catch (error:any) {
+        // --- DETAILED ERROR LOGGING SECTION ---
+        console.error("=================================================");
+        console.error("🚨 VdoCipher API Call Failed 🚨");
+        
+        if (error.response) {
+            // Error from VdoCipher (API responded with non-2xx status, e.g., 401, 404)
+            console.error("VdoCipher Response Status:", error.response.status); 
+            console.error("VdoCipher Error Data:", error.response.data);
+            console.error("Request URL:", error.config.url);
+            
+            // Helpful hint based on status code
+            if (error.response.status === 401) {
+                console.warn("HINT: 401 Unauthorized likely means the VDOCIPHER_API_SECRET is wrong or expired.");
+            } else if (error.response.status === 404) {
+                console.warn("HINT: 404 Not Found likely means the video ID is incorrect or not yet processed by VdoCipher.");
+            }
+        } else if (error.request) {
+            // Error: No response received (e.g., network issue, DNS error)
+            console.error("Network or No Response Received:", error.message);
+        } else {
+            // Other errors (e.g., issue setting up the request, like missing headers)
+            console.error("General Axios Error:", error.message);
+        }
+        console.error("=================================================");
+        // -----------------------------------------------------------------
+
+        // Return the generic 400 error to the client
+        return next(new ErrorHandler("Video OTP generation failed. Check server logs for details.", 400))
+    }
+})
