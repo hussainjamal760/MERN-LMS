@@ -80,14 +80,12 @@ const AllCourses = (props: Props) => {
             color: theme === 'dark' ? "#fff" : "#000",
             borderBottom: theme === 'dark' ? "1px solid #ffffff30!important" : "1px solid #ccc!important",
           },
-          /* --- FIX START: Target selected rows to remove background change --- */
           "& .MuiDataGrid-row.Mui-selected": {
             backgroundColor: "transparent !important", 
             "&:hover": {
                  backgroundColor: "transparent !important", 
             }
           },
-          /* --- FIX END --- */
           "& .MuiDataGrid-row:hover": {
             backgroundColor: "transparent !important", 
           },
