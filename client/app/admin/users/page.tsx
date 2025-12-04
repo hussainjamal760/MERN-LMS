@@ -2,7 +2,7 @@
 import React from 'react'
 import DashboardHero from '../../../app/components/Admin/DashboardHero'
 import AdminSidebar from '../../../app/components/Admin/sidebar/AdminSidebar'
-import AllCourses from '../../../app/components/Admin/Course/AllCourses'
+import AllUsers from '../../../app/components/Admin/Users/AllUsers'
 import Heading from '../../../app/utils/Heading'
 import AdminProtected from "../../hooks/adminProtected"
 
@@ -26,7 +26,7 @@ const page = (props: Props) => {
             
                 <div className="1500px:w-[84%] w-[80%] ml-auto p-4 overflow-y-auto h-screen bg-gray-50 dark:bg-gray-900 transition-all">
                    <DashboardHero/>
-                   <AllCourses/>
+                   <AllUsers isTeam={false}/>
                 </div>
 
             </div>

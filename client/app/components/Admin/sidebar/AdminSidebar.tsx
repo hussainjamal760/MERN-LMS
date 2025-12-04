@@ -5,7 +5,10 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { 
     FaHome, FaUsers, FaVideo, FaGraduationCap, FaChartBar, FaChartPie, 
-    FaFileInvoice, FaCog, FaSignOutAlt, FaArrowRight, FaArrowLeft 
+    FaFileInvoice, FaCog, FaSignOutAlt, FaArrowRight, FaArrowLeft, 
+    FaTeamspeak,
+    FaPeopleArrows,
+    FaBox
 } from 'react-icons/fa'
 
 type Props = {}
@@ -78,8 +81,10 @@ const AdminSidebar = (props: Props) => {
                 <SectionLabel label="Customization" isCollapsed={isCollapsed} />
                 <SidebarItem title="Hero" icon={<FaChartBar size={20} />} to="/admin/hero" isCollapsed={isCollapsed} hoverClass={glassHover} />
                 <SidebarItem title="FAQ" icon={<FaChartPie size={20} />} to="/admin/faq" isCollapsed={isCollapsed} hoverClass={glassHover} />
-                <SidebarItem title="Categories" icon={<FaChartPie size={20} />} to="/admin/categories" isCollapsed={isCollapsed} hoverClass={glassHover} />
+                <SidebarItem title="Categories" icon={<FaBox size={20} />} to="/admin/categories" isCollapsed={isCollapsed} hoverClass={glassHover} />
 
+                <SectionLabel label="Customization" isCollapsed={isCollapsed} />
+                <SidebarItem title="Team" icon={<FaPeopleArrows size={20} />} to="/admin/team" isCollapsed={isCollapsed} hoverClass={glassHover} />
 
                 <SectionLabel label="Analytics" isCollapsed={isCollapsed} />
                 <SidebarItem title="Courses Stats" icon={<FaChartBar size={20} />} to="/admin/courses-analytics" isCollapsed={isCollapsed} hoverClass={glassHover} />
