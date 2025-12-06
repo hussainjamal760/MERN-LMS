@@ -1,18 +1,22 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
-import { Box, Button } from "@mui/material";
+import { Box, Button, Modal, Typography } from "@mui/material";
 import { AiOutlineDelete } from "react-icons/ai";
 import { FiEdit2 } from "react-icons/fi";
 import { useTheme } from "next-themes";
-import { useGetAllCoursesQuery } from '../../../../redux/features/courses/coursesApi';
+import { useDeleteCourseMutation, useGetAllCoursesQuery } from '../../../../redux/features/courses/coursesApi';
 import Loader from '../../Loader/Loader';
 import {format} from "timeago.js"
+import toast from 'react-hot-toast';
 
 type Props = {}
 
 const AllCourses = (props: Props) => {
   const { theme } = useTheme();
-  const {isLoading , data , error} = useGetAllCoursesQuery({})
+  const {isLoading , data , refetch } = useGetAllCoursesQuery({} , {refetchOnMountOrArgChange:true})
+  const [deleteCourse , {isSuccess , error}] = useDeleteCourseMutation();
+  const [open, setOpen] = useState(false)
+  const [courseId, setCourseId] = useState("")
 
   const columns: GridColDef[] = [
     { field: "id", headerName: "ID", flex: 0.5 },
@@ -41,7 +45,11 @@ const AllCourses = (props: Props) => {
       renderCell: (params: any) => {
         return (
           <>
-            <Button>
+            <Button
+            onClick={()=>{
+              setOpen(!open)
+              setCourseId(params.row.id)
+            }}>
               <AiOutlineDelete className="text-black dark:text-white hover:text-red-500 transition-colors" size={20} />
             </Button>
           </>
@@ -63,6 +71,26 @@ const AllCourses = (props: Props) => {
         
     })
   })}
+
+  useEffect(() => {
+    if(isSuccess){
+      setOpen(false)
+      refetch()
+      toast.success("Course Created Successfully");
+    }
+    if(error){
+      if("data" in error){
+        const errorMessage = error as any;
+        toast.error(errorMessage.data.message)
+      }
+    }
+  }, [isSuccess , error])
+  
+
+  const handleDelete =  async ()=>{
+    const id = courseId;
+    await deleteCourse(id)
+  }
 
   return (
     <div className="mt-[80px] w-full"> 
@@ -132,7 +160,44 @@ const AllCourses = (props: Props) => {
             rows={rows} 
             columns={columns} 
         />
-      </Box>)}
+
+<Modal
+                open={open}
+                onClose={() => setOpen(false)}
+                aria-labelledby="delete-modal-title"
+                aria-describedby="delete-modal-description"
+              >
+                <Box className="absolute top-[50%] left-[50%] -translate-x-1/2 -translate-y-1/2 w-[300px] bg-white dark:bg-slate-900 rounded-[8px] shadow p-4 outline-none">
+                  <Typography
+                    variant="h6"
+                    className={`${
+                      theme === "dark" ? "text-white" : "text-black"
+                    } text-center mb-4`}
+                  >
+                    Are you sure you want to delete this course?
+                  </Typography>
+                  <div className="flex w-full justify-between items-center">
+                    <Button
+                      className="text-white !bg-[#57c7a3]"
+                      onClick={() => setOpen(false)}
+                    >
+                      Cancel
+                    </Button>
+                    <Button
+                      className="text-white !bg-[#d63f3f]"
+                      onClick={handleDelete}
+                    >
+                      Delete
+                    </Button>
+                  </div>
+                </Box>
+              </Modal>
+
+
+      </Box>
+    
+    
+    )}
     </div>
   );
 };
