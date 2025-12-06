@@ -20,7 +20,7 @@ export const coursesApi = apiSlice.injectEndpoints({
     deleteCourse: builder.mutation({
       query : (id) =>({
         url:`delete-course/${id}`,
-        method:"GET",
+        method: "DELETE",
         credentials:"include" as const,
       }),
     }),

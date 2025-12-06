@@ -1,16 +1,34 @@
 'use client'
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import CourseInformation from "./CourseInformation"
 import CourseOptions from "./CourseOptions"
 import CourseData from "./CourseData"
 import CourseContent from "./CourseContent"
 import CoursePreview from "./CoursePreview"
-
+import { useCreateCourseMutation } from "../../../../redux/features/courses/coursesApi"
+import { useRouter } from "next/navigation"
+import toast from "react-hot-toast"
 
 type Props = {}
 
 const CreateCourse = (props: Props) => {
+    const [createCourse, {isLoading, isSuccess, error}] = useCreateCourseMutation()
+    const router = useRouter()
+
+    useEffect(() => {
+        if(isSuccess){
+            toast.success("Course created successfully")
+            router.push("/admin/courses")
+        }
+        if(error){
+            if("data" in error){
+                const errorMessage = error as any
+                toast.error(errorMessage.data.message)
+            }
+        }
+    }, [isLoading, isSuccess, error])
+
     const [active, setActive] = useState(0)
     const [courseInfo, setCourseInfo] = useState({
         name:"",
@@ -69,10 +87,12 @@ const CreateCourse = (props: Props) => {
     setCourseData(data)
   };
   
-  const handleCourseCreate = (e:any) =>{
+  const handleCourseCreate = async (e:any) =>{
     const data = courseData
+    if(!isLoading){
+        await createCourse(data)
+    }
   }
-
 
   return (
         <div className="w-full flex min-h-screen">
@@ -86,7 +106,6 @@ const CreateCourse = (props: Props) => {
                         setActive={setActive}
                         />
                     )
-                    
                 }
                 {
                      active === 1 && (
@@ -100,7 +119,6 @@ const CreateCourse = (props: Props) => {
                         />
                     )
                 }
-
                  {
                      active === 2 && (
                         <CourseContent
@@ -112,7 +130,6 @@ const CreateCourse = (props: Props) => {
                         />
                     )
                 }
-
                  {
                      active === 3 && (
                         <CoursePreview
@@ -124,11 +141,11 @@ const CreateCourse = (props: Props) => {
                     )
                 }
             </div>
-<div className="w-[20%] mt-[100px] h-screen fixed z-[50] top-18 right-0">                <CourseOptions active={active}  setActive={setActive}/>
+            <div className="w-[20%] mt-[100px] h-screen fixed z-[50] top-18 right-0">
+                <CourseOptions active={active}  setActive={setActive}/>
             </div>
         </div>
     )
 }
-
 
 export default CreateCourse
