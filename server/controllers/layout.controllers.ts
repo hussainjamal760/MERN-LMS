@@ -65,21 +65,24 @@ export const createLayout= CatchAsyncError(async(req:Request , res:Response , ne
     }
 })
 
-export const editLayout= CatchAsyncError(async(req:Request , res:Response , next:NextFunction)=>{
+export const editLayout = CatchAsyncError(async(req:Request , res:Response , next:NextFunction)=>{
     try {
-
-        const {type} =req.body;
+        const {type} = req.body;
 
         if(type === "Banner"){
             const bannerData:any = await LayoutModel.findOne({type:"Banner"})
             const {image , title,subTitle} = req.body;
+            
             if(bannerData){
-                await cloudinary.v2.uploader.destroy(bannerData.image.public_id)
+                await cloudinary.v2.uploader.destroy(bannerData.banner.image.public_id)
             }
+            
             const myCloud = await cloudinary.v2.uploader.upload(image,{
                 folder:"layout",
             })
-            const banner ={
+            
+            const banner = {
+                type: "Banner",
                 image:{
                     public_id:myCloud.public_id,
                     url:myCloud.secure_url
@@ -87,35 +90,51 @@ export const editLayout= CatchAsyncError(async(req:Request , res:Response , next
                 title,
                 subTitle
             };
-            await LayoutModel.findByIdAndUpdate(bannerData._id,{banner})
+
+            if (!bannerData) {
+                await LayoutModel.create({ type: "Banner", banner });
+            } else {
+                await LayoutModel.findByIdAndUpdate(bannerData._id, { banner });
+            }
         }
 
         if(type === "FAQ"){
-            const {faq}= req.body;
-            const faqItem:any = await LayoutModel.findOne({type:"FAQ"})
+            const {faq} = req.body;
             const faqItems = await Promise.all(
                 faq.map(async(item:any)=>{
-                    return{
-                        question:item.question,
-                        answer:item.answer,
+                    return {
+                        question: item.question,
+                        answer: item.answer,
                     }
                 })
             )
-            await LayoutModel.findOneAndUpdate(faqItem?._id,{type:"FAQ",faq:faqItems})
+            
+            const faqData = await LayoutModel.findOne({ type: "FAQ" });
+            
+            if (!faqData) {
+                await LayoutModel.create({ type: "FAQ", faq: faqItems });
+            } else {
+                await LayoutModel.findByIdAndUpdate(faqData._id, { type: "FAQ", faq: faqItems });
+            }
         }
 
-
-         if(type === "Categories"){
-            const {categories}= req.body;
-            const categoriesData:any = await LayoutModel.findOne({type:"Categories"})
+        if(type === "Categories"){
+            const {categories} = req.body;
             const categoriesItems = await Promise.all(
                 categories.map(async(item:any)=>{
-                    return{
-                        title:item.title
+                    return {
+                        title: item.title
                     }
                 })
             )
-            await LayoutModel.create(categoriesData?._id,{type:"Categories",categories:categoriesItems})
+            
+            const categoriesData = await LayoutModel.findOne({ type: "Categories" });
+            
+            if (!categoriesData) {
+                await LayoutModel.create({ type: "Categories", categories: categoriesItems });
+            } else {
+                await LayoutModel.findByIdAndUpdate(categoriesData._id, { type: "Categories", categories: categoriesItems });
+            }
         }
 
         res.status(200).json({
@@ -128,11 +147,10 @@ export const editLayout= CatchAsyncError(async(req:Request , res:Response , next
     }
 })
 
-
-export const getLayout= CatchAsyncError(async(req:Request , res:Response , next:NextFunction)=>{
+export const getLayout = CatchAsyncError(async(req:Request , res:Response , next:NextFunction)=>{
     try {
-
-        const {type} = req.body;
+        const type = req.body.type || req.query.type; 
+        
         const layout = await LayoutModel.findOne({type})
 
          res.status(200).json({
