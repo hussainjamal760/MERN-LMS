@@ -64,7 +64,7 @@ const EditHero: FC<Props> = (props) => {
   return (
     <div className="w-full flex flex-col items-center justify-center min-h-screen pb-20 bg-gray-50 dark:bg-[#0e1329]">
       <div className="relative">
-        <div className="relative w-[300px] h-[300px] md:w-[500px] md:h-[500px] flex justify-center items-center overflow-hidden rounded-full my-4 shadow-xl border-4 border-white dark:border-[#ffffff1c] group">
+        <div className="relative w-[150px] h-[150px] md:w-[500px] md:h-[500px] flex justify-center items-center overflow-hidden rounded-full my-4 shadow-xl border-4 border-white dark:border-[#ffffff1c] group">
             
             <input
                 type="file"
@@ -91,12 +91,10 @@ const EditHero: FC<Props> = (props) => {
                     </div>
                 )}
                 
-                {/* Camera Icon Overlay - Always visible on top */}
                 <div className="absolute bottom-10 right-10 z-30 p-3 bg-white dark:bg-slate-800 rounded-full shadow-lg hover:scale-110 transition-transform duration-300">
                     <AiOutlineCamera className="text-gray-800 dark:text-white text-[25px]" />
                 </div>
 
-                {/* Optional: Hover overlay to indicate clickability */}
                 <div className="absolute inset-0 bg-black/30 z-20 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                     <span className="text-white font-semibold">Change Image</span>
                 </div>
