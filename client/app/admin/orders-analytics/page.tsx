@@ -1,9 +1,9 @@
 'use client'
 import React from 'react'
-import DashboardHero from '../../../app/components/Admin/DashboardHero'
-import AdminSidebar from '../../../app/components/Admin/sidebar/AdminSidebar'
-import OrderAnalytics from '../../../app/components/Admin/Course/OrderAnalytics'
-import Heading from '../../../app/utils/Heading'
+import DashboardHero from '../../components/Admin/DashboardHero'
+import AdminSidebar from '../../components/Admin/sidebar/AdminSidebar'
+import OrderAnalytics from '../../components/Admin/Course/OrderAnalytics'
+import Heading from '../../utils/Heading'
 import AdminProtected from "../../hooks/adminProtected"
 
 type Props = {}

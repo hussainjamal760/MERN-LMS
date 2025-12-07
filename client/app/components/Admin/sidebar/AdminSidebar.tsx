@@ -8,7 +8,10 @@ import {
     FaFileInvoice, FaCog, FaSignOutAlt, FaArrowRight, FaArrowLeft, 
     FaTeamspeak,
     FaPeopleArrows,
-    FaBox
+    FaBox,
+    FaChartLine,
+    FaQuestion,
+    FaImage
 } from 'react-icons/fa'
 
 type Props = {}
@@ -83,8 +86,8 @@ const [mounted, setMounted] = useState(false) // 1. Add mounted state
                 <SidebarItem title="Live Courses" icon={<FaGraduationCap size={20} />} to="/admin/courses" isCollapsed={isCollapsed} hoverClass={glassHover} />
 
                 <SectionLabel label="Customization" isCollapsed={isCollapsed} />
-                <SidebarItem title="Hero" icon={<FaChartBar size={20} />} to="/admin/hero" isCollapsed={isCollapsed} hoverClass={glassHover} />
-                <SidebarItem title="FAQ" icon={<FaChartPie size={20} />} to="/admin/faq" isCollapsed={isCollapsed} hoverClass={glassHover} />
+                <SidebarItem title="Hero" icon={<FaImage size={20} />} to="/admin/hero" isCollapsed={isCollapsed} hoverClass={glassHover} />
+                <SidebarItem title="FAQ" icon={<FaQuestion size={20} />} to="/admin/faq" isCollapsed={isCollapsed} hoverClass={glassHover} />
                 <SidebarItem title="Categories" icon={<FaBox size={20} />} to="/admin/categories" isCollapsed={isCollapsed} hoverClass={glassHover} />
 
                 <SectionLabel label="Customization" isCollapsed={isCollapsed} />
@@ -92,12 +95,10 @@ const [mounted, setMounted] = useState(false) // 1. Add mounted state
 
                 <SectionLabel label="Analytics" isCollapsed={isCollapsed} />
                 <SidebarItem title="Courses Stats" icon={<FaChartBar size={20} />} to="/admin/courses-analytics" isCollapsed={isCollapsed} hoverClass={glassHover} />
-                <SidebarItem title="Users Stats" icon={<FaChartBar size={20} />} to="/admin/users-analytics" isCollapsed={isCollapsed} hoverClass={glassHover} />
+                <SidebarItem title="Users Stats" icon={<FaChartLine size={20} />} to="/admin/users-analytics" isCollapsed={isCollapsed} hoverClass={glassHover} />
                 <SidebarItem title="Orders Stats" icon={<FaChartPie size={20} />} to="/admin/orders-analytics" isCollapsed={isCollapsed} hoverClass={glassHover} />
 
-                <SectionLabel label="System" isCollapsed={isCollapsed} />
-                <SidebarItem title="Settings" icon={<FaCog size={20} />} to="/admin/settings" isCollapsed={isCollapsed} hoverClass={glassHover} />
-            </div>
+             </div>
 
             {/* --- 3. Bottom Section: Logout --- */}
             <div className="p-4 border-t border-gray-100 dark:border-gray-800 bg-white dark:bg-[#111C43]">
