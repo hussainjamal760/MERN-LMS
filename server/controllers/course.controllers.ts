@@ -419,7 +419,7 @@ export const addReplyToReview =CatchAsyncError(async(req:Request,res:Response,ne
 })
 
 
-export const getAllCourses = CatchAsyncError(
+export const getAdminAllCourses = CatchAsyncError(
     async(req:Request , res:Response, next:NextFunction)=>{
         try {
             getAllCoursesService(res)
