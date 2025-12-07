@@ -100,7 +100,6 @@ const [mounted, setMounted] = useState(false) // 1. Add mounted state
 
              </div>
 
-            {/* --- 3. Bottom Section: Logout --- */}
             <div className="p-4 border-t border-gray-100 dark:border-gray-800 bg-white dark:bg-[#111C43]">
                 <button className={`
                     flex items-center w-full p-2 rounded-xl transition-all duration-300 group

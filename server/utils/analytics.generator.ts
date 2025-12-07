@@ -22,7 +22,7 @@ export async function generateLast12MonthsData<T extends Document>(
         const startDate = new Date(
             endDate.getFullYear(),
             endDate.getMonth(),
-            endDate.getDate()  * 28
+            endDate.getDate() - 28
         )
 
         const monthYear = endDate.toLocaleString("default",{
