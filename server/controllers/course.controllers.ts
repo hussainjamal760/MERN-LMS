@@ -39,14 +39,23 @@ export const uploadCourse = CatchAsyncError(async(req:Request,res:Response,next:
 })
 
 
-
 export const editCourse = CatchAsyncError(async(req:Request,res:Response,next:NextFunction)=>{
     try {
         const data = req.body;
         const thumbnail = data.thumbnail;
+        const courseId = req.params.id;
 
-        if(thumbnail){
-            await cloudinary.v2.uploader.destroy(thumbnail.public_id)
+        const courseData = await CourseModel.findById(courseId) as any;
+
+        if(!courseData){
+            return next(new ErrorHandler("Course not found", 404));
+        }
+
+        if(thumbnail && !thumbnail.startsWith("https")){
+            if (courseData.thumbnail?.public_id) {
+                await cloudinary.v2.uploader.destroy(courseData.thumbnail.public_id);
+            }
+
             const myCloud = await cloudinary.v2.uploader.upload(thumbnail,{
                 folder:"courses"
             })
@@ -56,9 +65,11 @@ export const editCourse = CatchAsyncError(async(req:Request,res:Response,next:Ne
                 url:myCloud.secure_url
             }
         }
-        
-        const courseId= req.params.id;
 
+        if(thumbnail && thumbnail.startsWith("https")){
+             data.thumbnail = courseData.thumbnail;
+        }
+        
         const course = await CourseModel.findByIdAndUpdate(
             courseId,{
                 $set:data,

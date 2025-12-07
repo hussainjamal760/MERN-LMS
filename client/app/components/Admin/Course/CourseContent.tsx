@@ -36,15 +36,19 @@ const CourseContent: FC<Props> = ({
     setIsCollapsed(updatedCollapsed);
   };
 
-  const handleRemoveLink = (index: number, linkIndex: number) => {
+ const handleRemoveLink = (index: number, linkIndex: number) => {
     const updatedData = [...courseContentData];
-    updatedData[index].links.splice(linkIndex, 1);
+    const updatedLinks = [...updatedData[index].links]; // Copy links array
+    updatedLinks.splice(linkIndex, 1);
+    updatedData[index] = { ...updatedData[index], links: updatedLinks }; // Update object
     setCourseContentData(updatedData);
   };
 
   const handleAddLink = (index: number) => {
     const updatedData = [...courseContentData];
-    updatedData[index].links.push({ title: "", url: "" });
+    const updatedLinks = [...updatedData[index].links]; // Copy links array
+    updatedLinks.push({ title: "", url: "" });
+    updatedData[index] = { ...updatedData[index], links: updatedLinks }; // Update object
     setCourseContentData(updatedData);
   };
 
@@ -153,10 +157,10 @@ const CourseContent: FC<Props> = ({
                       value={item.videoSection || (index === 0 ? "Untitled Section 1" : item.videoSection)}
                       
                       onChange={(e) => {
-                        const updatedData = [...courseContentData];
-                        updatedData[index].videoSection = e.target.value;
-                        setCourseContentData(updatedData);
-                      }}
+  const updatedData = [...courseContentData];
+  updatedData[index] = { ...updatedData[index], videoSection: e.target.value };
+  setCourseContentData(updatedData);
+}}
                     />
                     <BiSolidPencil className="cursor-pointer dark:text-white text-black ml-2 text-xl" />
                   </div>
@@ -214,11 +218,11 @@ const CourseContent: FC<Props> = ({
                       placeholder="e.g. Introduction to React"
                       className="w-full h-[40px] px-3 rounded bg-transparent border border-gray-400 dark:text-white text-black outline-none focus:border-[#37a39a] transition-colors"
                       value={item.title}
-                      onChange={(e) => {
-                        const updatedData = [...courseContentData];
-                        updatedData[index].title = e.target.value;
-                        setCourseContentData(updatedData);
-                      }}
+                     onChange={(e) => {
+  const updatedData = [...courseContentData];
+  updatedData[index] = { ...updatedData[index], title: e.target.value };
+  setCourseContentData(updatedData);
+}}
                     />
                   </div>
 
@@ -231,11 +235,11 @@ const CourseContent: FC<Props> = ({
                       placeholder="e.g. https://xyz.com/video..."
                       className="w-full h-[40px] px-3 rounded bg-transparent border border-gray-400 dark:text-white text-black outline-none focus:border-[#37a39a] transition-colors"
                       value={item.videoUrl}
-                      onChange={(e) => {
-                        const updatedData = [...courseContentData];
-                        updatedData[index].videoUrl = e.target.value;
-                        setCourseContentData(updatedData);
-                      }}
+                onChange={(e) => {
+  const updatedData = [...courseContentData];
+  updatedData[index] = { ...updatedData[index], videoUrl: e.target.value };
+  setCourseContentData(updatedData);
+}}
                     />
                   </div>
 
@@ -248,11 +252,11 @@ const CourseContent: FC<Props> = ({
                       placeholder="Describe what this video is about..."
                       className="w-full p-3 rounded bg-transparent border border-gray-400 dark:text-white text-black outline-none focus:border-[#37a39a] transition-colors resize-none"
                       value={item.description}
-                      onChange={(e) => {
-                        const updatedData = [...courseContentData];
-                        updatedData[index].description = e.target.value;
-                        setCourseContentData(updatedData);
-                      }}
+                    onChange={(e) => {
+  const updatedData = [...courseContentData];
+  updatedData[index] = { ...updatedData[index], description: e.target.value };
+  setCourseContentData(updatedData);
+}}
                     />
                   </div>
 
@@ -286,24 +290,28 @@ const CourseContent: FC<Props> = ({
                             placeholder="Link Title (e.g. Source Code)"
                             className="w-full h-[35px] px-3 rounded bg-transparent border border-gray-400 dark:text-white text-black outline-none focus:border-[#37a39a] text-sm"
                             value={link.title}
-                            onChange={(e) => {
-                                const updatedData = [...courseContentData];
-                                updatedData[index].links[linkIndex].title =
-                                e.target.value;
-                                setCourseContentData(updatedData);
-                            }}
+                         onChange={(e) => {
+  const updatedData = [...courseContentData];
+  const updatedLinks = [...updatedData[index].links]; // Copy the links array
+  // Copy the specific link object
+  updatedLinks[linkIndex] = { ...updatedLinks[linkIndex], title: e.target.value };
+  // Assign the new links array back to the object copy
+  updatedData[index] = { ...updatedData[index], links: updatedLinks };
+  setCourseContentData(updatedData);
+}}
                             />
                             <input
                             type="text"
                             placeholder="URL (e.g. https://github.com/...)"
                             className="w-full h-[35px] px-3 rounded bg-transparent border border-gray-400 dark:text-white text-black outline-none focus:border-[#37a39a] text-sm"
                             value={link.url}
-                            onChange={(e) => {
-                                const updatedData = [...courseContentData];
-                                updatedData[index].links[linkIndex].url =
-                                e.target.value;
-                                setCourseContentData(updatedData);
-                            }}
+                           onChange={(e) => {
+  const updatedData = [...courseContentData];
+  const updatedLinks = [...updatedData[index].links];
+  updatedLinks[linkIndex] = { ...updatedLinks[linkIndex], url: e.target.value };
+  updatedData[index] = { ...updatedData[index], links: updatedLinks };
+  setCourseContentData(updatedData);
+}}
                             />
                         </div>
                       </div>

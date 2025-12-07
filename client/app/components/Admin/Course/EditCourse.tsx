@@ -6,54 +6,54 @@ import CourseOptions from "./CourseOptions"
 import CourseData from "./CourseData"
 import CourseContent from "./CourseContent"
 import CoursePreview from "./CoursePreview"
-import { useCreateCourseMutation, useGetAllCoursesQuery } from "../../../../redux/features/courses/coursesApi"
+import { useEditCourseMutation, useGetAllCoursesQuery } from "../../../../redux/features/courses/coursesApi"
 import { useRouter } from "next/navigation"
 import toast from "react-hot-toast"
 
 type Props = {
-    id:String
+    id: String
 }
 
 const EditCourse: FC<Props> = ({id}) => {
-    // const [createCourse, {isLoading, isSuccess, error}] = useCreateCourseMutation()
-    // const router = useRouter()
+    const [editCourse, {isSuccess, error}] = useEditCourseMutation()
+    const router = useRouter()
 
-    // useEffect(() => {
-    //     if(isSuccess){
-    //         toast.success("Course created successfully")
-    //         router.push("/admin/courses")
-    //     }
-    //     if(error){
-    //         if("data" in error){
-    //             const errorMessage = error as any
-    //             toast.error(errorMessage.data.message)
-    //         }
-    //     }
-    // }, [isLoading, isSuccess, error])
+    useEffect(() => {
+        if(isSuccess){
+            toast.success("Course updated successfully")
+            router.push("/admin/courses")
+        }
+        if(error){
+            if("data" in error){
+                const errorMessage = error as any
+                toast.error(errorMessage.data.message)
+            }
+        }
+    }, [isSuccess, error])
 
     const {isLoading , data , refetch}= useGetAllCoursesQuery({} , {refetchOnMountOrArgChange:true})
    
     const [active, setActive] = useState(0);
 
-  const editCourseData = data && data.courses.find((i: any) => i._id === id);
+    const editCourseData = data && data.courses.find((i: any) => i._id === id);
 
-  useEffect(() => {
-    if (editCourseData) {
-      setCourseInfo({
-        name: editCourseData.name,
-        description: editCourseData.description,
-        price: editCourseData.price,
-        estimatedPrice: editCourseData.estimatedPrice,
-        tags: editCourseData.tags,
-        level: editCourseData.level,
-        demoUrl: editCourseData.demoUrl,
-        thumbnail: editCourseData?.thumbnail?.url,
-      });
-      setBenefits(editCourseData.benefits);
-      setPrerequisites(editCourseData.prerequisites);
-      setCourseContentData(editCourseData.courseData);
-    }
-  }, [editCourseData]);
+    useEffect(() => {
+        if (editCourseData) {
+            setCourseInfo({
+                name: editCourseData.name,
+                description: editCourseData.description,
+                price: editCourseData.price,
+                estimatedPrice: editCourseData.estimatedPrice,
+                tags: editCourseData.tags,
+                level: editCourseData.level,
+                demoUrl: editCourseData.demoUrl,
+                thumbnail: editCourseData?.thumbnail?.url,
+            });
+            setBenefits(editCourseData.benefits);
+            setPrerequisites(editCourseData.prerequisites);
+            setCourseContentData(editCourseData.courseData);
+        }
+    }, [editCourseData]);
 
     const [courseInfo, setCourseInfo] = useState({
         name:"",
@@ -86,37 +86,38 @@ const EditCourse: FC<Props> = ({id}) => {
 
     const [courseData, setCourseData] = useState({})
 
-   const handleSubmit = async () => {
-    const formattedBenefits = benefits.map((benefit) => ({
-      title: benefit.title,
-    }));
+    const handleSubmit = async () => {
+        const formattedBenefits = benefits.map((benefit) => ({
+            title: benefit.title,
+        }));
 
-    const formattedPrerequisites = prerequisites.map((prerequisite) => ({
-      title: prerequisite.title,
-    }));
+        const formattedPrerequisites = prerequisites.map((prerequisite) => ({
+            title: prerequisite.title,
+        }));
 
-    const data = {
-      name: courseInfo.name,
-      description: courseInfo.description,
-      price: courseInfo.price,
-      estimatedPrice: courseInfo.estimatedPrice,
-      tags: courseInfo.tags,
-      thumbnail: courseInfo.thumbnail,
-      level: courseInfo.level,
-      demoUrl: courseInfo.demoUrl,
-      totalVideos: courseContentData.length,
-      benefits: formattedBenefits,
-      prerequisites: formattedPrerequisites,
-      courseData: courseContentData, 
-    }
-    setCourseData(data)
-  };
+        const data = {
+            name: courseInfo.name,
+            description: courseInfo.description,
+            price: courseInfo.price,
+            estimatedPrice: courseInfo.estimatedPrice,
+            tags: courseInfo.tags,
+            thumbnail: courseInfo.thumbnail,
+            level: courseInfo.level,
+            demoUrl: courseInfo.demoUrl,
+            totalVideos: courseContentData.length,
+            benefits: formattedBenefits,
+            prerequisites: formattedPrerequisites,
+            courseData: courseContentData, 
+        }
+        setCourseData(data)
+    };
   
-  const handleCourseCreate = async (e:any) =>{
-    const data = courseData
-  }
+    const handleCourseCreate = async (e:any) =>{
+        const data = courseData
+        await editCourse({ id: id, data: data })
+    }
 
-  return (
+    return (
         <div className="w-full flex min-h-screen">
             <div className="w-[80%]">
                 {

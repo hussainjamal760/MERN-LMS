@@ -1,6 +1,7 @@
 import {apiSlice} from "../api/apiSlice"
 
 export const userApi = apiSlice.injectEndpoints({
+  overrideExisting: true,
     endpoints:(builder)=>({
         updateAvatar : builder.mutation({
             query:(avatar)=>({
