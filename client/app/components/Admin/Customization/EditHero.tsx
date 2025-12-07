@@ -64,7 +64,7 @@ const EditHero: FC<Props> = (props) => {
   return (
     <div className="w-full flex flex-col items-center justify-center min-h-screen pb-20 bg-gray-50 dark:bg-[#0e1329]">
       <div className="relative">
-        <div className="relative w-[150px] h-[150px] md:w-[500px] md:h-[500px] flex justify-center items-center overflow-hidden rounded-full my-4 shadow-xl border-4 border-white dark:border-[#ffffff1c] group">
+        <div className="relative w-[150px] h-[150px] md:w-[300px] md:h-[300px] flex justify-center items-center overflow-hidden rounded-full my-4 shadow-xl border-4 border-white dark:border-[#ffffff1c] group">
             
             <input
                 type="file"

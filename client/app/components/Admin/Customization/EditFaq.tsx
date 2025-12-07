@@ -1,4 +1,3 @@
-// client/app/components/Admin/Customization/EditFaq.tsx
 import { useEditLayoutMutation, useGetHeroDataQuery } from "@/redux/features/layout/layoutApi";
 import React, { useEffect, useState } from "react";
 import { toast } from "react-hot-toast";
@@ -62,20 +61,17 @@ const EditFaq = (props: Props) => {
       {
         question: "",
         answer: "",
-        active: true, // Auto-expand the new item
-        _id: Date.now().toString(), // Temporary ID for frontend key
-      },
+        active: true, 
+        _id: Date.now().toString(), 
+    },
     ]);
   };
 
-  // Function to determine if a question is expanded (active)
   const isQuestionActive = (q: any) => {
-      // If 'active' property exists, use it. Otherwise false.
       return q.active || false;
   }
 
   const handleEdit = async () => {
-    // Basic validation
     if (questions.some((q) => q.question === "" || q.answer === "")) {
         toast.error("All fields are required!");
         return;
@@ -96,7 +92,7 @@ const EditFaq = (props: Props) => {
       {isLoading ? (
         <Loader />
       ) : (
-        <div className="w-[90%] 800px:w-[80%] m-auto mt-[120px] pb-20">
+        <div className="w-[90%] 800px:w-[80%] m-auto mt-[80px] pb-20">
           <div className="mt-12">
             <dl className="space-y-8">
               {questions.map((q: any) => (
