@@ -1,8 +1,7 @@
 'use client'
-import React, { FC, useState } from 'react'
+import { useGetHeroDataQuery } from '@/redux/features/layout/layoutApi';
+import React, { FC, useEffect, useState } from 'react'
 import toast from 'react-hot-toast'
-
-import { AiOutlineCloudUpload } from 'react-icons/ai' 
 
 type Props = {
     courseInfo: any,
@@ -13,10 +12,33 @@ type Props = {
 
 const CourseInformation: FC<Props> = ({ courseInfo, setCourseInfo, active, setActive }) => {
     const [dragging, setDragging] = useState(false);
+    
+    // 1. Fetch Categories with Loading and Error states
+    const { data, isLoading, error } = useGetHeroDataQuery("Categories", {
+        refetchOnMountOrArgChange: true 
+    });
+    const [categories, setCategories] = useState([]);
+
+    useEffect(() => {
+        // DEBUGGING: Check console to see what is happening
+        if (isLoading) {
+            console.log("Loading Categories...");
+        }
+        if (error) {
+            console.error("Error fetching categories:", error);
+            toast.error("Failed to load categories");
+        }
+        if (data) {
+            console.log("Categories Data Received:", data);
+            // Check if layout exists, otherwise default to empty array
+            setCategories(data.layout?.categories || []);
+        }
+    }, [data, isLoading, error]);
 
     const handleSubmit = (e: any) => {
         e.preventDefault();
-        if(courseInfo.name === "" || courseInfo.description === "" || courseInfo.price === "") {
+        // Validation including category
+        if(courseInfo.name === "" || courseInfo.description === "" || courseInfo.price === "" || courseInfo.categories === "") {
              toast.error("Please fill necessary fields")
              return;
         }
@@ -36,16 +58,8 @@ const CourseInformation: FC<Props> = ({ courseInfo, setCourseInfo, active, setAc
         }
     };
 
-    const handleDragOver = (e: any) => {
-        e.preventDefault();
-        setDragging(true);
-    };
-
-    const handleDragLeave = (e: any) => {
-        e.preventDefault();
-        setDragging(false);
-    };
-
+    const handleDragOver = (e: any) => { e.preventDefault(); setDragging(true); };
+    const handleDragLeave = (e: any) => { e.preventDefault(); setDragging(false); };
     const handleDrop = (e: any) => {
         e.preventDefault();
         setDragging(false);
@@ -134,7 +148,33 @@ const CourseInformation: FC<Props> = ({ courseInfo, setCourseInfo, active, setAc
                             className="w-full p-2 border border-gray-300 rounded text-gray-700 dark:text-white dark:bg-gray-800 dark:border-gray-700 focus:outline-none focus:ring-2 focus:ring-[#37a39a]"
                         />
                     </div>
+                    
+                    {/* Updated Category Section */}
                     <div className="w-[50%]">
+                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">
+                            Course Categories
+                        </label>
+                        <select
+                            className="w-full p-2 border border-gray-300 rounded text-gray-700 dark:text-white dark:bg-gray-800 dark:border-gray-700 focus:outline-none focus:ring-2 focus:ring-[#37a39a]"
+                            value={courseInfo.categories}
+                            onChange={(e) => setCourseInfo({...courseInfo, categories: e.target.value})}
+                        >
+                            <option value="">Select Category</option>
+                            {/* Check if categories exist and map them */}
+                            {categories && categories.length > 0 && categories.map((item: any) => (
+                                <option value={item.title} key={item._id}>
+                                    {item.title}
+                                </option>
+                            ))}
+                        </select>
+                        {/* Status Message for Debugging */}
+                        {isLoading && <p className="text-xs text-blue-500 mt-1">Loading categories...</p>}
+                        {error && <p className="text-xs text-red-500 mt-1">Error loading categories. Check console.</p>}
+                    </div>
+                </div>
+
+                <div className="w-full flex justify-between gap-5">
+                    <div className="w-[45%]">
                         <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">
                             Course Level
                         </label>
@@ -147,19 +187,18 @@ const CourseInformation: FC<Props> = ({ courseInfo, setCourseInfo, active, setAc
                             className="w-full p-2 border border-gray-300 rounded text-gray-700 dark:text-white dark:bg-gray-800 dark:border-gray-700 focus:outline-none focus:ring-2 focus:ring-[#37a39a]"
                         />
                     </div>
-                </div>
-
-                <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">
-                        Demo URL
-                    </label>
-                    <input
-                        type="text"
-                        value={courseInfo.demoUrl}
-                        onChange={(e) => setCourseInfo({ ...courseInfo, demoUrl: e.target.value })}
-                        placeholder="e.g. https://www.youtube.com/watch?v=..."
-                        className="w-full p-2 border border-gray-300 rounded text-gray-700 dark:text-white dark:bg-gray-800 dark:border-gray-700 focus:outline-none focus:ring-2 focus:ring-[#37a39a]"
-                    />
+                    <div className="w-[50%]">
+                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">
+                            Demo URL
+                        </label>
+                        <input
+                            type="text"
+                            value={courseInfo.demoUrl}
+                            onChange={(e) => setCourseInfo({ ...courseInfo, demoUrl: e.target.value })}
+                            placeholder="e.g. https://www.youtube.com/watch?v=..."
+                            className="w-full p-2 border border-gray-300 rounded text-gray-700 dark:text-white dark:bg-gray-800 dark:border-gray-700 focus:outline-none focus:ring-2 focus:ring-[#37a39a]"
+                        />
+                    </div>
                 </div>
 
                 <div className="w-full">

@@ -149,8 +149,7 @@ export const editLayout = CatchAsyncError(async(req:Request , res:Response , nex
 
 export const getLayout = CatchAsyncError(async(req:Request , res:Response , next:NextFunction)=>{
     try {
-        const type = req.body.type || req.query.type; 
-        
+        const type = req.query.type || req.body?.type;        
         const layout = await LayoutModel.findOne({type})
 
          res.status(200).json({
