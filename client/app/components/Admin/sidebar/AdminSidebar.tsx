@@ -22,7 +22,7 @@ const AdminSidebar = (props: Props) => {
 
     const activeColor = "bg-gradient-to-r from-[#37a39a] to-[#55c8bf] shadow-lg shadow-[#37a39a]/30"
     const glassHover = "hover:bg-gray-100 dark:hover:bg-white/5"
-const [mounted, setMounted] = useState(false) // 1. Add mounted state
+const [mounted, setMounted] = useState(false) 
 
     useEffect(() => {
         setMounted(true)

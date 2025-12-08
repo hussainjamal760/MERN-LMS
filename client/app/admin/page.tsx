@@ -28,7 +28,7 @@ const page = (props: Props) => {
                    <p className='text-gray-500 mt-2'>Welcome back, Hussain.</p>
                    
                    <div className="mt-10 h-[150vh] border-2 border-dashed border-gray-300 dark:border-gray-700 rounded-lg flex items-center justify-center text-gray-400">
-                    <DashboardHero/>
+                    <DashboardHero isDashboard={true}/>
                    </div>
                 </div>
             </div>
