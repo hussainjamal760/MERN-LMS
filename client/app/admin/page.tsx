@@ -9,7 +9,7 @@ type Props = {}
 
 const page = (props: Props) => {
   return (
-    <div>
+    <div className="h-screen overflow-hidden">
         <AdminProtected>
             <Heading
                 title='SheepAcademy - Admin'
@@ -17,18 +17,19 @@ const page = (props: Props) => {
                 keywords='mern'
             />
 
-            <div className="flex min-h-screen">
-               
-                <div className="w-[80px] md:w-[290px] flex-shrink-0 transition-all duration-500">
+            <div className="flex h-screen">
+                <div className="w-[80px] md:w-[290px] flex-shrink-0 transition-all duration-500 h-full border-r border-gray-200 dark:border-gray-700">
                    <AdminSidebar/>
                 </div>
                 
-                <div className='flex-1 p-6 h-screen overflow-y-auto bg-gray-50 dark:bg-gray-900'>
-                   <h1 className="text-2xl font-bold dark:text-white">Dashboard Overview</h1>
-                   <p className='text-gray-500 mt-2'>Welcome back, Hussain.</p>
+                <div className='flex-1 flex flex-col h-screen overflow-hidden bg-gray-50 dark:bg-gray-900'>
+                   <div className="p-2 pb-0">
+                      <h1 className="text-2xl font-bold text-black dark:text-white">Dashboard Overview</h1>
+                      <p className='text-gray-500 mt-1'>Welcome back.</p>
+                   </div>
                    
-                   <div className="mt-10 h-[150vh] border-2 border-dashed border-gray-300 dark:border-gray-700 rounded-lg flex items-center justify-center text-gray-400">
-                    <DashboardHero isDashboard={true}/>
+                   <div className="flex-1 p-2 overflow-hidden">
+                      <DashboardHero isDashboard={true}/>
                    </div>
                 </div>
             </div>

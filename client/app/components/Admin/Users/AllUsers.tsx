@@ -36,8 +36,8 @@ const AllUsers: FC<Props> = ({ isTeam }) => {
   const [deleteUser, { isSuccess: deleteSuccess, error: deleteError }] =
     useDeleteUserMutation();
 
-  const [active, setActive] = useState(false); // Add Member Modal
-  const [open, setOpen] = useState(false); // Delete Confirmation Modal
+  const [active, setActive] = useState(false); 
+  const [open, setOpen] = useState(false); 
   const [userId, setUserId] = useState("");
 
   const [email, setEmail] = useState("");
