@@ -34,6 +34,11 @@ const Header: FC<Props> = ({ open, setOpen, activeItem ,route, setRoute }) => {
       skip:!logout ? true : false
     })
 
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   useEffect(()=>{
     if(!user){
@@ -114,7 +119,7 @@ const Header: FC<Props> = ({ open, setOpen, activeItem ,route, setRoute }) => {
             </div>
 
             {
-              user ? (
+              mounted && user ? (
                 <Link href={"/profile"}>
                   <Image
                     src={user?.avatar && user.avatar.url !== "" ? user.avatar.url : avatar}
@@ -145,7 +150,7 @@ const Header: FC<Props> = ({ open, setOpen, activeItem ,route, setRoute }) => {
             <div className="w-[70%] fixed z-[999999] h-screen bg-white dark:bg-slate-900 dark:bg-opacity-90 top-0 right-0">
               
               <Link href='/'>
-=                 <Image
+                 <Image
                   src="/logo.png"
                   alt="Sheep Academy Logo"
                   width={120} 

@@ -77,6 +77,9 @@ export const editCourse = CatchAsyncError(async(req:Request,res:Response,next:Ne
             {new:true}
         )
 
+        // FIX: Delete the old cache so the new data is fetched next time
+        await redis.del(courseId);
+
         res.status(201).json({
             success:true,
             course,
