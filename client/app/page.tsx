@@ -6,6 +6,7 @@ import Hero from "./components/Route/Hero";
 import Courses from "./components/Route/Courses";
 import Reviews from "./components/Route/Reviews";
 import FAQ from "./components/FAQ/FAQ";
+import Footer from "./components/Footer/Footer"
 
 interface Props {}
 
@@ -67,6 +68,7 @@ course management system"
       <Courses/>
       <Reviews/>
       <FAQ/>
+      <Footer/>
     </>
   );
 };
