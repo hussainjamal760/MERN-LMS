@@ -5,10 +5,12 @@ import Image from "next/image";
 import { BiSearch } from "react-icons/bi";
 import Lottie from "lottie-react";
 import animationData from "../../../public/hero-img.json"; 
+import { useGetHeroDataQuery } from "@/redux/features/layout/layoutApi";
 
 type Props = {};
 
 const Hero: FC<Props> = (props) => {
+  const {data , refetch} = useGetHeroDataQuery("Banner" , {})
   return (
     <div className="w-full flex items-center min-h-[calc(100vh-80px)]">
       <div className="absolute top-[100px] left-[50px] w-[400px] h-[400px] hero_animation rounded-[50%] blur-[120px] z-[1]" />
@@ -23,12 +25,12 @@ const Hero: FC<Props> = (props) => {
 
         <div className="w-full md:w-[50%] flex flex-col items-start text-center md:text-left mt-10 md:mt-0">
           <h2 className="text-[30px] md:text-[60px] font-[500] font-[family:var(--font-family-josefin)] text-[#000000c7] dark:text-white leading-[1.2]">
-            Sheep Academy: Learn Smarter, Anytime, Anywhere
+            {data?.layout?.banner?.title}
           </h2>
           
           <p className="mt-4 text-[18px] font-[family:var(--font-family-poppins)] font-[400] text-[#000000ac] dark:text-[#edfff4]">
-            We have 40k+ Online courses & 500K+ Online registered students. Find
-            your desired course from them.
+            {data?.layout?.banner?.subTitle}
+
           </p>
 
           <div className="w-full mt-8 relative">
