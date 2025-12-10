@@ -40,7 +40,14 @@ export const coursesApi = apiSlice.injectEndpoints({
         credentaials:"include" as const,
       }),
     }),
+    getCourseDetails : builder.query({
+      query:(id)=>({
+        url:`get-course/${id}`,
+        method:"GET",
+        credentaials:"include" as const,
+      }),
+    }),
   }),
 });
 
-export const { useCreateCourseMutation, useGetAllCoursesQuery , useDeleteCourseMutation , useEditCourseMutation , useGetUsersAllCoursesQuery} = coursesApi;
+export const { useCreateCourseMutation, useGetAllCoursesQuery , useDeleteCourseMutation , useEditCourseMutation , useGetUsersAllCoursesQuery , useGetCourseDetailsQuery} = coursesApi;
