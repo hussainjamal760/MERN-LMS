@@ -1,6 +1,7 @@
 "use client";
 import React, { FC } from "react";
 import Link from "next/link";
+import { motion } from "framer-motion";
 import Image from "next/image";
 import { BiSearch } from "react-icons/bi";
 import Lottie from "lottie-react";
@@ -24,9 +25,27 @@ const Hero: FC<Props> = (props) => {
         </div>
 
         <div className="w-full md:w-[50%] flex flex-col items-start text-center md:text-left mt-10 md:mt-0">
-          <h2 className="text-[30px] md:text-[60px] font-[500] font-[family:var(--font-family-josefin)] text-[#000000c7] dark:text-white leading-[1.2]">
-            {data?.layout?.banner?.title}
-          </h2>
+         <h2 className="text-[30px] md:text-[60px] font-[500] font-[family:var(--font-family-josefin)] text-[#000000c7] dark:text-white leading-[1.2]">
+    
+    <span className="
+    relative
+    inline-block
+    bg-gradient-to-r from-[#37a39a] via-[#4facfe] to-[#37a39a]
+    bg-[length:200%_auto]
+    animate-gradient
+    bg-clip-text
+    text-transparent
+    transition-all
+    duration-300
+    hover:scale-110
+    hover:drop-shadow-[0_0_15px_rgba(79,172,254,0.9)]
+    cursor-pointer
+">
+    Sheep Academy :
+</span>
+    
+    {" "}{data?.layout?.banner?.title}
+</h2>
           
           <p className="mt-4 text-[18px] font-[family:var(--font-family-poppins)] font-[400] text-[#000000ac] dark:text-[#edfff4]">
             {data?.layout?.banner?.subTitle}
