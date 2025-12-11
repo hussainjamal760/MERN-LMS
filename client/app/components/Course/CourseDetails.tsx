@@ -10,6 +10,7 @@ import { IoCheckmarkDoneOutline, IoCloseOutline, IoPeopleOutline } from "react-i
 import { format } from 'timeago.js';
 import {Elements} from "@stripe/react-stripe-js"
 import CheckOutForm from "../Payments/CheckOutForm"
+import { useLoadUserQuery } from '@/redux/features/api/apiSlice';
 
 type Props = {
   data: any;
@@ -20,6 +21,8 @@ type Props = {
 const CourseDetails = ({ data , clientSecret ,stripePromise}: Props) => {
   const [isExpanded, setIsExpanded] = useState(false);
   const [open, setOpen] = useState(false)
+  const { data: userData } = useLoadUserQuery(undefined, {});
+  const user = userData?.user;
 
   const discountPercentage = ((data?.estimatedPrice - data?.price) / data?.estimatedPrice) * 100;
 
@@ -30,6 +33,26 @@ const CourseDetails = ({ data , clientSecret ,stripePromise}: Props) => {
   const handleClick = () =>{
     setOpen(true)
   }
+
+  const handleClose = (e: any) => {
+    if (e.target.id === "screen") {
+        setOpen(false);
+    }
+  }
+
+  const appearance = {
+    theme: 'night', 
+    labels: 'floating',
+    variables: {
+        colorPrimary: '#005555',
+        colorBackground: '#0f172a', 
+        colorText: '#ffffff',       
+        colorDanger: '#df1b41',
+        fontFamily: 'Poppins, sans-serif',
+        spacingUnit: '3px',
+        borderRadius: '8px',
+    },
+  };
 
   return (
     <div className="w-[90%] 800px:w-[90%] m-auto py-5">
@@ -44,20 +67,20 @@ const CourseDetails = ({ data , clientSecret ,stripePromise}: Props) => {
                 />
              </div>
          <div className="flex items-center justify-between pt-6 pb-2">
-    <div className="flex items-center px-4 py-2 rounded-full bg-amber-50 dark:bg-amber-900/10 border border-amber-100 dark:border-amber-900/20 shadow-sm transition-transform hover:scale-105">
-        <Ratings rating={data?.ratings} />
-        <h5 className="text-amber-600 dark:text-amber-500 font-Poppins font-semibold text-[15px] ml-2">
-            {data?.reviews?.length} Reviews
-        </h5>
-    </div>
+            <div className="flex items-center px-4 py-2 rounded-full bg-amber-50 dark:bg-amber-900/10 border border-amber-100 dark:border-amber-900/20 shadow-sm transition-transform hover:scale-105">
+                <Ratings rating={data?.ratings} />
+                <h5 className="text-amber-600 dark:text-amber-500 font-Poppins font-semibold text-[15px] ml-2">
+                    {data?.reviews?.length} Reviews
+                </h5>
+            </div>
 
-    <div className="flex items-center px-4 py-2 rounded-full bg-teal-50 dark:bg-teal-900/10 border border-teal-100 dark:border-teal-900/20 shadow-sm transition-transform hover:scale-105">
-        <IoPeopleOutline size={20} className="text-[#37a39a] mr-2" />
-        <h5 className="text-[#37a39a] font-Poppins font-semibold text-[15px]">
-            {data?.purchased} Students
-        </h5>
-    </div>
-</div>
+            <div className="flex items-center px-4 py-2 rounded-full bg-teal-50 dark:bg-teal-900/10 border border-teal-100 dark:border-teal-900/20 shadow-sm transition-transform hover:scale-105">
+                <IoPeopleOutline size={20} className="text-[#37a39a] mr-2" />
+                <h5 className="text-[#37a39a] font-Poppins font-semibold text-[15px]">
+                    {data?.purchased} Students
+                </h5>
+            </div>
+        </div>
 
              <h1 className="text-[25px] font-[600] font-Poppins text-black dark:text-white mb-5 mt-2">
                 {data?.name}
@@ -189,28 +212,31 @@ const CourseDetails = ({ data , clientSecret ,stripePromise}: Props) => {
         </div>
         
       </div>
+      
       {open && (
-  <div className="w-full h-screen bg-[#00000036] fixed top-0 left-0 z-50 flex items-center justify-center">
-    <div className="w-[500px] min-h-[500px] bg-white rounded-xl shadow p-3">
-      <div className="w-full flex justify-end">
-        <IoCloseOutline
-          size={40}
-          className="text-black cursor-pointer"
-          onClick={() => setOpen(false)}
-        />
-      </div>
-      <div className="w-full">
-        {stripePromise && clientSecret && (
-            <Elements stripe={stripePromise} options={{clientSecret}} >
-                <CheckOutForm setOpen={setOpen} data={data}/>
-            </Elements>
-
-        )}
-      </div>
-    </div>
-
-  </div>
-)}
+        <div 
+            id="screen" 
+            onClick={handleClose} 
+            className="fixed top-0 left-0 w-full h-screen z-[99999] flex items-center justify-center bg-[#00000040] backdrop-blur-sm"
+        >
+            <div className="w-[350px] md:w-[400px] h-auto max-h-[80vh] overflow-y-auto bg-slate-900/90 backdrop-blur-xl rounded-[20px] shadow-[0_8px_32px_0_rgba(31,38,135,0.37)] border border-[rgba(255,255,255,0.18)] p-5 relative outline-none animate-in fade-in zoom-in duration-200">
+                <div className="absolute top-3 right-3 z-50">
+                    <IoCloseOutline
+                        size={30}
+                        className="text-white cursor-pointer hover:scale-110 transition-transform"
+                        onClick={() => setOpen(false)}
+                    />
+                </div>
+                <div className="w-full mt-2">
+                    {stripePromise && clientSecret && (
+                        <Elements stripe={stripePromise} options={{clientSecret, appearance: appearance as any}} >
+                            <CheckOutForm setOpen={setOpen} data={data} user={user}/>
+                        </Elements>
+                    )}
+                </div>
+            </div>
+        </div>
+      )}
     </div>
   );
 }

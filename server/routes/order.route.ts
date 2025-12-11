@@ -6,6 +6,6 @@ const orderRouter = express.Router();
 orderRouter.post("/create-order" , isAuthenticated , createOrder)
 orderRouter.get("/get-orders" , isAuthenticated , authorizeRoles("admin"),getAllOrders)
 orderRouter.get("/payment/stripepublishablekey" ,sendStripePublishableKey  )
-orderRouter.get("/payment" , isAuthenticated , newPayment)
+orderRouter.post("/payment" , isAuthenticated , newPayment)
 
 export default orderRouter

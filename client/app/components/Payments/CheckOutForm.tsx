@@ -1,12 +1,12 @@
 import { useLoadUserQuery } from '@/redux/features/api/apiSlice';
 import { useCreateOrderMutation } from '@/redux/features/orders/ordersApi';
-// PaymentElement ko import karna zaroori hai
 import { PaymentElement, useElements, useStripe } from '@stripe/react-stripe-js';
 import React, { useEffect, useState } from 'react'
 
 type Props = {
     setOpen: any,
-    data: any
+    data: any,
+    user?: any
 }
 
 const CheckOutForm = ({ setOpen, data }: Props) => {
@@ -24,7 +24,6 @@ const CheckOutForm = ({ setOpen, data }: Props) => {
             return;
         }
         setIsLoading(true);
-        // Stripe payment confirm karna
         const { error, paymentIntent } = await stripe.confirmPayment({
             elements,
             redirect: "if_required",
@@ -35,17 +34,14 @@ const CheckOutForm = ({ setOpen, data }: Props) => {
             setIsLoading(false);
         } else if (paymentIntent && paymentIntent.status === "succeeded") {
             setIsLoading(false);
-            // Agar payment successful hai, to backend par order create karein
             createOrder({ courseId: data._id, payment_info: paymentIntent });
         }
     };
 
-    // Order safalta-poorvak banne ke baad kya karna hai
     useEffect(() => {
         if (orderData) {
-            setLoadUser(true); // User data refresh karein taaki naya course dikhe
-            setOpen(false);    // Modal band karein
-            // Yahan aap ek success toast/alert bhi dikha sakte hain
+            setLoadUser(true);
+            setOpen(false);
         }
         if (orderError && 'data' in orderError) {
              const errorData = orderError.data as any;
@@ -53,49 +49,50 @@ const CheckOutForm = ({ setOpen, data }: Props) => {
         }
     }, [orderData, orderError, setOpen]);
 
-
-    // --- Yahan se Form ka UI shuru hota hai ---
     return (
         <form id="payment-form" onSubmit={handleSubmit} className="w-full">
-            <h2 className="text-[20px] font-[600] font-Poppins text-black dark:text-white pb-4">
-                Pay securely with Stripe
-            </h2>
+            <div className="w-full flex pb-2 border-b border-[#0000001c] dark:border-[#ffffff1c] mb-4">
+                <h2 className="text-[14px] font-[600] font-Poppins text-black dark:text-white">
+                    Secure Checkout
+                </h2>
+            </div>
 
-            {/* Stripe ka bana banaya UI element card details ke liye */}
             <div className="my-4">
                 <PaymentElement id="payment-element" />
             </div>
 
-            {/* Agar koi error ho to yahan dikhayein */}
             {message && (
-                <div id="payment-message" className="text-red-500 text-[16px] font-Poppins pt-2">
-                    {message}
+                <div id="payment-message" className="flex items-center justify-center p-2 mb-4 text-sm text-red-700 bg-red-100 rounded-lg dark:bg-red-200 dark:text-red-800" role="alert">
+                   <span className="font-medium mr-1">Error:</span> {message}
                 </div>
             )}
 
-            {/* Submit button */}
             <button
                 disabled={isLoading || !stripe || !elements}
                 id="submit"
-                className={`w-full mt-6 h-[45px] flex items-center justify-center rounded-[8px] font-Poppins font-[600] text-white transition-all duration-300
+                className={`w-full h-[40px] flex items-center justify-center rounded-[8px] font-Poppins font-[600] text-white text-[16px] shadow-lg transition-all duration-300
                     ${isLoading || !stripe || !elements
-                        ? "bg-gray-400 cursor-not-allowed" // Loading ke dauran button disabled
-                        : "bg-[#37a39a] hover:bg-[#2e8880] cursor-pointer" // Normal state
+                        ? "bg-gray-400 cursor-not-allowed opacity-70"
+                        : "bg-gradient-to-r from-[#00A9E0] to-[#007EA7] hover:from-[#007EA7] hover:to-[#005570] cursor-pointer hover:shadow-xl hover:-translate-y-[1px]"
                     }`}
             >
                 <span id="button-text">
                     {isLoading ? (
-                        // Chota sa loading spinner text
-                        "Processing Payment..."
+                        <div className="flex items-center gap-2">
+                             <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                             Processing...
+                        </div>
                     ) : (
-                        // Price ke sath Pay button
                         `Pay Now $${data?.price}`
                     )}
                 </span>
             </button>
+            
+            <p className="text-[11px] text-gray-500 dark:text-gray-400 mt-3 text-center font-Poppins opacity-80">
+                Secured by Stripe
+            </p>
         </form>
     );
-
 };
 
 export default CheckOutForm

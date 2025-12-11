@@ -121,7 +121,7 @@ export const newPayment = CatchAsyncError(async (req:Request , res:Response, nex
         const myPayment = await stripe.paymentIntents.create({
             amount:req.body.amount,
             currency: "USD",
-            metaData : {
+            metadata : {
                 company : "Sheep Academy",
             },
             automatic_payment_methods:{
