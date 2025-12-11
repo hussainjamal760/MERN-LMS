@@ -60,6 +60,7 @@ export const coursesApi = apiSlice.injectEndpoints({
         url: "add-question",
         method: "PUT",
         body: data,
+        credentials: "include" as const, 
       }),
     }),
     addAnswer: builder.mutation({
@@ -67,6 +68,8 @@ export const coursesApi = apiSlice.injectEndpoints({
         url: "add-answer",
         method: "PUT",
         body: data,
+        credentials: "include" as const, 
+
       }),
     }),
     addReview: builder.mutation({
@@ -74,6 +77,8 @@ export const coursesApi = apiSlice.injectEndpoints({
         url: `add-review/${id}`,
         method: "PUT",
         body: { review, rating },
+        credentials: "include" as const, 
+
       }),
     }),
     addReplyInReview: builder.mutation({
@@ -81,6 +86,8 @@ export const coursesApi = apiSlice.injectEndpoints({
         url: 'add-reply',
         method: "PUT",
         body: { comment, courseId, reviewId },
+        credentials: "include" as const, 
+
       }),
     }),
   }),

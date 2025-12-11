@@ -149,6 +149,15 @@ export const getCourseByUser = CatchAsyncError(async(req:Request,res:Response,ne
         }
 
         const course = await CourseModel.findById(courseId)
+        .populate({
+            path: "courseData.questions.user",
+            select: "name avatar",
+        })
+        .populate({
+            path: "courseData.questions.questionReplies.user",
+            select: "name avatar",
+        });
+
         const content = course?.courseData;
 
          res.status(200).json({
@@ -193,7 +202,7 @@ export const addQuestion = CatchAsyncError(async(req:Request,res:Response,next:N
         }
 
         const newQuestion = {
-            user: new mongoose.Types.ObjectId(req.user._id.toString()),
+            user: req.user._id,
             question: question,
             questionReplies: []
         }
@@ -208,12 +217,6 @@ export const addQuestion = CatchAsyncError(async(req:Request,res:Response,next:N
         })
 
         await course?.save()
-
-
-        // Fetch fresh to verify
-        const verifyCourse = await CourseModel.findById(courseId);
-        const verifyContent = verifyCourse?.courseData?.find((item:any)=>item._id.equals(contentId));
-        const lastQuestion = verifyContent?.questions[verifyContent.questions.length - 1];
 
         res.status(200).json({
             success:true,

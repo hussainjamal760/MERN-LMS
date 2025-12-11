@@ -2,7 +2,7 @@ import mongoose,{Schema,Document,Model,Types} from 'mongoose'
 import { IUser } from './user.model'
 
 interface IComment extends Document{
-    user: Types.ObjectId,  // Changed to just ObjectId
+    user: Types.ObjectId,
     question:string,
     questionReplies:IComment[],
 }
@@ -54,12 +54,23 @@ const reviewSchema = new Schema<IReview>({
     rating:{type:Number,default:0},
     comment:String,
     commentReplies:[Object]
-})
+},{timestamps:true})
 
 const linkSchema = new Schema<ILink>({
     title:String,
     url:String,
 })
+
+// Added Schema for replies to enable population
+const replySchema = new Schema({
+    user: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User'
+    },
+    answer: String,
+    createdAt: { type: Date, default: Date.now },
+    updatedAt: { type: Date, default: Date.now },
+});
 
 const commentSchema = new Schema<IComment>({
     user: {
@@ -67,8 +78,8 @@ const commentSchema = new Schema<IComment>({
         ref: 'User'
     },
     question: String, 
-    questionReplies: [Object]
-})
+    questionReplies: [replySchema] // Changed from [Object] to [replySchema]
+},{timestamps:true})
 
 const courseDataSchema = new Schema<ICourseData>({
     videoUrl:String,

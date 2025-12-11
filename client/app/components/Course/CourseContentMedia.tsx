@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import CoursePlayer from '../../../app/utils/CoursePlayer';
 import { AiFillStar, AiOutlineArrowLeft, AiOutlineArrowRight, AiOutlineStar } from 'react-icons/ai';
@@ -24,12 +23,10 @@ const CourseContentMedia = ({ data, id, activeVideo, setActiveVideo, user, refet
     const [question, setQuestion] = useState('');
     const [review, setReview] = useState('');
     const [rating, setRating] = useState(1);
-    const [answer, setAnswer] = useState('');
-    const [questionId, setQuestionId] = useState('');
-    // const [isReviewReply, setIsReviewReply] = useState(false); // Unused
+    
+    // Removed shared answer/questionId state from here to prevent input conflicts
 
     const [addQuestion, { isSuccess, error, isLoading: questionCreationLoading }] = useAddQuestionMutation();
-    const [addAnswer, { isSuccess: answerSuccess, error: answerError, isLoading: answerCreationLoading }] = useAddAnswerMutation();
     const { data: courseData, refetch: courseRefetch } = useGetCourseDetailsQuery(id, { refetchOnMountOrArgChange: true });
     const [addReview, { isSuccess: reviewSuccess, error: reviewError, isLoading: reviewCreationLoading }] = useAddReviewMutation();
 
@@ -45,16 +42,19 @@ const CourseContentMedia = ({ data, id, activeVideo, setActiveVideo, user, refet
         }
     };
 
+    const handleReviewSubmit = () => {
+        if (review.length === 0) {
+            toast.error("Review can't be empty");
+        } else {
+            addReview({ review, rating, id });
+        }
+    };
+
     useEffect(() => {
         if (isSuccess) {
             setQuestion("");
             refetch();
             toast.success("Question added successfully");
-        }
-        if (answerSuccess) {
-            setAnswer("");
-            refetch();
-            toast.success("Answer added successfully");
         }
         if (reviewSuccess) {
             setReview("");
@@ -68,31 +68,14 @@ const CourseContentMedia = ({ data, id, activeVideo, setActiveVideo, user, refet
                 toast.error(errorMessage.data.message);
             }
         }
-        if (answerError) {
-            if ("data" in answerError) {
-                const errorMessage = answerError as any;
-                toast.error(errorMessage.data.message);
-            }
-        }
         if (reviewError) {
             if ("data" in reviewError) {
                 const errorMessage = reviewError as any;
                 toast.error(errorMessage.data.message);
             }
         }
-    }, [isSuccess, error, answerSuccess, answerError, reviewSuccess, reviewError, refetch, courseRefetch]);
+    }, [isSuccess, error, reviewSuccess, reviewError, refetch, courseRefetch]);
 
-    const handleAnswerSubmit = () => {
-        addAnswer({ answer, courseId: id, contentId: data[activeVideo]._id, questionId: questionId });
-    };
-
-    const handleReviewSubmit = () => {
-        if (review.length === 0) {
-            toast.error("Review can't be empty");
-        } else {
-            addReview({ review, rating, id });
-        }
-    };
     if (!data || data.length === 0) {
         return (
             <div className="w-full h-screen flex items-center justify-center">
@@ -143,12 +126,14 @@ const CourseContentMedia = ({ data, id, activeVideo, setActiveVideo, user, refet
             </div>
 
             <div className="min-h-[300px]">
+                {/* Overview */}
                 {activeBar === 0 && (
                     <p className="text-[17px] leading-8 whitespace-pre-line text-slate-700 dark:text-slate-300 font-Poppins animate-in fade-in duration-500">
                         {data[activeVideo]?.description}
                     </p>
                 )}
 
+                {/* Resources */}
                 {activeBar === 1 && (
                     <div className="animate-in fade-in duration-500">
                         {data[activeVideo]?.links.map((item: any, index: number) => (
@@ -164,11 +149,12 @@ const CourseContentMedia = ({ data, id, activeVideo, setActiveVideo, user, refet
                     </div>
                 )}
 
+                {/* Q&A */}
                 {activeBar === 2 && (
                     <div className="animate-in fade-in duration-500">
                         <div className="flex w-full gap-4">
                             <Image
-                                src={user.avatar ? user.avatar.url : "/avatar.png"} // Fixed path assumption
+                                src={user.avatar ? user.avatar.url : "/avatar.png"}
                                 width={50}
                                 height={50}
                                 alt="user"
@@ -199,16 +185,13 @@ const CourseContentMedia = ({ data, id, activeVideo, setActiveVideo, user, refet
                         <div className="w-full h-[1px] bg-slate-200 dark:bg-slate-700 my-8"></div>
 
                         <div>
+                            {/* Passed necessary IDs for answers */}
                             <CommentReply
                                 data={data}
                                 activeVideo={activeVideo}
-                                answer={answer}
-                                setAnswer={setAnswer}
-                                handleAnswerSubmit={handleAnswerSubmit}
                                 user={user}
-                                questionId={questionId}
-                                setQuestionId={setQuestionId}
-                                answerCreationLoading={answerCreationLoading}
+                                courseId={id}
+                                refetch={refetch}
                             />
                         </div>
                     </div>
@@ -222,7 +205,7 @@ const CourseContentMedia = ({ data, id, activeVideo, setActiveVideo, user, refet
                                 <div className="mb-8">
                                     <div className="flex w-full gap-4">
                                         <Image
-                                            src={user.avatar ? user.avatar.url : "/avatar.png"} // Fixed path assumption
+                                            src={user.avatar ? user.avatar.url : "/avatar.png"}
                                             width={50}
                                             height={50}
                                             alt="user"
@@ -282,7 +265,7 @@ const CourseContentMedia = ({ data, id, activeVideo, setActiveVideo, user, refet
                                         <div className="w-full flex gap-4">
                                             <div className='shrink-0'>
                                                 <Image
-                                                    src={item.user.avatar ? item.user.avatar.url : "/avatar.png"} // Fixed path assumption
+                                                    src={item.user.avatar ? item.user.avatar.url : "/avatar.png"}
                                                     width={50}
                                                     height={50}
                                                     alt=""
@@ -317,7 +300,7 @@ const CourseContentMedia = ({ data, id, activeVideo, setActiveVideo, user, refet
     )
 }
 
-const CommentReply = ({ data, activeVideo, answer, setAnswer, handleAnswerSubmit, user, questionId, setQuestionId, answerCreationLoading }: any) => {
+const CommentReply = ({ data, activeVideo, user, courseId, refetch }: any) => {
     return (
         <div className="w-full my-3">
             {data[activeVideo].questions.map((item: any, index: any) => (
@@ -327,26 +310,56 @@ const CommentReply = ({ data, activeVideo, answer, setAnswer, handleAnswerSubmit
                     activeVideo={activeVideo}
                     item={item}
                     index={index}
-                    answer={answer}
-                    setAnswer={setAnswer}
-                    questionId={questionId}
-                    setQuestionId={setQuestionId}
-                    handleAnswerSubmit={handleAnswerSubmit}
-                    answerCreationLoading={answerCreationLoading}
+                    user={user}
+                    courseId={courseId}
+                    refetch={refetch}
                 />
             ))}
         </div>
     )
 }
 
-const CommentItem = ({ questionId, setQuestionId, item, answer, setAnswer, handleAnswerSubmit, answerCreationLoading }: any) => {
+const CommentItem = ({ item, user, courseId, data, activeVideo, refetch }: any) => {
     const [replyActive, setReplyActive] = useState(false);
+    const [answer, setAnswer] = useState('');
+    
+    // Moved Mutation here to isolate state per question
+    const [addAnswer, { isSuccess, error, isLoading: answerCreationLoading }] = useAddAnswerMutation();
+
+    const handleAnswerSubmit = () => {
+        if (answer.length === 0) {
+            toast.error("Answer cannot be empty");
+        } else {
+            addAnswer({
+                answer,
+                courseId: courseId,
+                contentId: data[activeVideo]._id,
+                questionId: item._id
+            });
+        }
+    };
+
+    useEffect(() => {
+        if (isSuccess) {
+            setAnswer('');
+            toast.success("Reply added successfully");
+            // Refetch parent data to show the new reply
+            if (refetch) refetch();
+        }
+        if (error) {
+            if ("data" in error) {
+                const errorMessage = error as any;
+                toast.error(errorMessage.data.message);
+            }
+        }
+    }, [isSuccess, error, refetch]);
+
     return (
         <div className="my-6 p-4 bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm transition-all hover:shadow-md">
             <div className="flex mb-4 gap-4">
                 <div className='shrink-0'>
                     <Image
-                        src={item.user.avatar ? item.user.avatar.url : "/avatar.png"} // Fixed path assumption
+                        src={item.user.avatar ? item.user.avatar.url : "/avatar.png"}
                         width={50}
                         height={50}
                         alt=""
@@ -373,7 +386,6 @@ const CommentItem = ({ questionId, setQuestionId, item, answer, setAnswer, handl
                     className='flex items-center gap-2 cursor-pointer text-slate-600 dark:text-slate-400 hover:text-cyan-500 dark:hover:text-cyan-400 transition-colors'
                     onClick={() => {
                         setReplyActive(!replyActive);
-                        setQuestionId(item._id);
                     }}
                 >
                     <BiMessage size={20} />
@@ -392,7 +404,7 @@ const CommentItem = ({ questionId, setQuestionId, item, answer, setAnswer, handl
                         <div className="w-full flex gap-4 mb-5 ml-4 pl-4 border-l-2 border-slate-200 dark:border-slate-700" key={index}>
                             <div className='shrink-0'>
                                 <Image
-                                    src={replyItem.user.avatar ? replyItem.user.avatar.url : "/avatar.png"} // Fixed path assumption
+                                    src={replyItem.user.avatar ? replyItem.user.avatar.url : "/avatar.png"}
                                     width={40}
                                     height={40}
                                     alt=""
@@ -441,4 +453,4 @@ const CommentItem = ({ questionId, setQuestionId, item, answer, setAnswer, handl
     )
 }
 
-export default CourseContentMedia
+export default CourseContentMedia;
