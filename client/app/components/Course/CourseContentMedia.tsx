@@ -3,7 +3,13 @@ import CoursePlayer from '../../../app/utils/CoursePlayer';
 import { AiFillStar, AiOutlineArrowLeft, AiOutlineArrowRight, AiOutlineStar } from 'react-icons/ai';
 import Image from 'next/image';
 import toast from 'react-hot-toast';
-import { useAddAnswerMutation, useAddQuestionMutation, useAddReviewMutation, useGetCourseDetailsQuery } from '../../../redux/features/courses/coursesApi';
+import { 
+    useAddAnswerMutation, 
+    useAddQuestionMutation, 
+    useAddReplyInReviewMutation, 
+    useAddReviewMutation, 
+    useGetCourseDetailsQuery 
+} from '../../../redux/features/courses/coursesApi';
 import { format } from 'timeago.js';
 import { BiMessage } from 'react-icons/bi';
 import { VscVerifiedFilled } from 'react-icons/vsc';
@@ -24,8 +30,6 @@ const CourseContentMedia = ({ data, id, activeVideo, setActiveVideo, user, refet
     const [review, setReview] = useState('');
     const [rating, setRating] = useState(1);
     
-    // Removed shared answer/questionId state from here to prevent input conflicts
-
     const [addQuestion, { isSuccess, error, isLoading: questionCreationLoading }] = useAddQuestionMutation();
     const { data: courseData, refetch: courseRefetch } = useGetCourseDetailsQuery(id, { refetchOnMountOrArgChange: true });
     const [addReview, { isSuccess: reviewSuccess, error: reviewError, isLoading: reviewCreationLoading }] = useAddReviewMutation();
@@ -185,7 +189,6 @@ const CourseContentMedia = ({ data, id, activeVideo, setActiveVideo, user, refet
                         <div className="w-full h-[1px] bg-slate-200 dark:bg-slate-700 my-8"></div>
 
                         <div>
-                            {/* Passed necessary IDs for answers */}
                             <CommentReply
                                 data={data}
                                 activeVideo={activeVideo}
@@ -261,40 +264,167 @@ const CourseContentMedia = ({ data, id, activeVideo, setActiveVideo, user, refet
 
                             <div className="w-full grid grid-cols-1 gap-6">
                                 {(courseData?.course?.reviews && [...courseData.course.reviews].reverse())?.map((item: any, index: number) => (
-                                    <div className="w-full p-4 bg-slate-50 dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800" key={index}>
-                                        <div className="w-full flex gap-4">
-                                            <div className='shrink-0'>
-                                                <Image
-                                                    src={item.user.avatar ? item.user.avatar.url : "/avatar.png"}
-                                                    width={50}
-                                                    height={50}
-                                                    alt=""
-                                                    className="w-[50px] h-[50px] rounded-full object-cover border border-slate-300 dark:border-slate-600"
-                                                />
-                                            </div>
-                                            <div className="w-full">
-                                                <div className='flex items-center justify-between'>
-                                                    <h1 className="text-[18px] font-semibold text-black dark:text-white font-Poppins">
-                                                        {item.user.name}
-                                                    </h1>
-                                                    <small className="text-slate-500 dark:text-slate-400">
-                                                        {format(item.createdAt)}
-                                                    </small>
-                                                </div>
-                                                <div className='my-1'>
-                                                    <Ratings rating={item.rating} />
-                                                </div>
-                                                <p className="text-slate-700 dark:text-slate-300 font-Poppins mt-2">
-                                                    {item.comment}
-                                                </p>
-                                            </div>
-                                        </div>
-                                    </div>
+                                    <ReviewItem
+                                        key={item._id || index}
+                                        item={item}
+                                        user={user}
+                                        courseId={id}
+                                        refetch={courseRefetch}
+                                    />
                                 ))}
                             </div>
                         </>
                     </div>
                 )}
+            </div>
+        </div>
+    )
+}
+
+// ---------------------- Sub-components ----------------------
+
+const ReviewItem = ({ item, user, courseId, refetch }: any) => {
+    const [replyActive, setReplyActive] = useState(false);
+    const [reply, setReply] = useState('');
+    const [addReplyInReview, { isSuccess, error, isLoading }] = useAddReplyInReviewMutation();
+
+    const handleReplySubmit = () => {
+        if (reply.length === 0) {
+            toast.error("Reply can't be empty");
+        } else {
+            addReplyInReview({ comment: reply, courseId, reviewId: item._id });
+        }
+    };
+
+    useEffect(() => {
+        if (isSuccess) {
+            setReply("");
+            refetch();
+            toast.success("Reply added successfully");
+            setReplyActive(false);
+        }
+        if (error) {
+            if ("data" in error) {
+                const errorMessage = error as any;
+                toast.error(errorMessage.data.message);
+            }
+        }
+    }, [isSuccess, error, refetch]);
+
+    return (
+        <div className="w-full p-4 bg-slate-50 dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800">
+            <div className="w-full flex gap-4">
+                <div className='shrink-0'>
+                    <Image
+                        src={item.user.avatar ? item.user.avatar.url : "/avatar.png"}
+                        width={50}
+                        height={50}
+                        alt=""
+                        className="w-[50px] h-[50px] rounded-full object-cover border border-slate-300 dark:border-slate-600"
+                    />
+                </div>
+                <div className="w-full">
+                    <div className='flex items-center justify-between'>
+                        <h1 className="text-[18px] font-semibold text-black dark:text-white font-Poppins">
+                            {item.user.name}
+                        </h1>
+                        <small className="text-slate-500 dark:text-slate-400">
+                            {format(item.createdAt)}
+                        </small>
+                    </div>
+                    <div className='my-1'>
+                        <Ratings rating={item.rating} />
+                    </div>
+                    <p className="text-slate-700 dark:text-slate-300 font-Poppins mt-2">
+                        {item.comment}
+                    </p>
+
+                    {/* Admin Reply Toggle - Visible to Admin */}
+                    {user.role === "admin" && (
+                         <div 
+                         className='flex items-center gap-2 mt-4 cursor-pointer text-slate-600 dark:text-slate-400 hover:text-cyan-500 dark:hover:text-cyan-400 transition-colors w-fit'
+                         onClick={() => setReplyActive(!replyActive)}
+                     >
+                         <BiMessage size={20} />
+                         <span className="text-[14px] font-medium font-Poppins">
+                             {!replyActive ? (item.commentReplies?.length !== 0 ? "All Replies" : "Add Reply") : "Hide Replies"}
+                         </span>
+                         {item.commentReplies?.length > 0 && (
+                            <span className="text-[12px] bg-slate-200 dark:bg-slate-700 px-2 py-0.5 rounded-full">
+                                {item.commentReplies.length}
+                            </span>
+                         )}
+                     </div>
+                    )}
+                    
+                    {/* View replies for Students */}
+                    {user.role !== "admin" && item.commentReplies?.length > 0 && (
+                         <div 
+                         className='flex items-center gap-2 mt-4 cursor-pointer text-slate-600 dark:text-slate-400 hover:text-cyan-500 dark:hover:text-cyan-400 transition-colors w-fit'
+                         onClick={() => setReplyActive(!replyActive)}
+                     >
+                         <BiMessage size={20} />
+                         <span className="text-[14px] font-medium font-Poppins">
+                             {!replyActive ? "View Replies" : "Hide Replies"}
+                         </span>
+                         <span className="text-[12px] bg-slate-200 dark:bg-slate-700 px-2 py-0.5 rounded-full">
+                                {item.commentReplies.length}
+                         </span>
+                     </div>
+                    )}
+
+                    {replyActive && (
+                         <div className='mt-4 animate-in fade-in slide-in-from-top-2 duration-300'>
+                            {item.commentReplies?.map((replyItem: any, index: number) => (
+                                <div className="w-full flex gap-4 mb-5 ml-4 pl-4 border-l-2 border-slate-200 dark:border-slate-700" key={index}>
+                                    <div className='shrink-0'>
+                                        <Image
+                                            src={replyItem.user.avatar ? replyItem.user.avatar.url : "/avatar.png"}
+                                            width={40}
+                                            height={40}
+                                            alt=""
+                                            className="w-[40px] h-[40px] rounded-full object-cover"
+                                        />
+                                    </div>
+                                    <div className="w-full">
+                                        <div className="flex items-center gap-2 mb-1">
+                                            <h5 className="text-[16px] font-semibold text-black dark:text-white font-Poppins">
+                                                {replyItem.user.name}
+                                            </h5>
+                                            <VscVerifiedFilled className="text-cyan-500 text-[16px]" title="Admin/Instructor" />
+                                        </div>
+                                        <p className="text-slate-600 dark:text-slate-300 text-[14px] font-Poppins">
+                                            {replyItem.comment}
+                                        </p>
+                                        <small className="text-slate-400 text-[12px] block mt-1">
+                                            {format(replyItem.createdAt || new Date())}
+                                        </small>
+                                    </div>
+                                </div>
+                            ))}
+
+                            {user.role === "admin" && (
+                                <div className="w-full relative mt-4">
+                                    <input
+                                        type="text"
+                                        placeholder="Type your reply..."
+                                        value={reply}
+                                        onChange={(e) => setReply(e.target.value)}
+                                        className={`w-full pr-20 pl-4 py-3 rounded-full border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-black dark:text-white outline-none focus:ring-2 focus:ring-cyan-500 transition-all ${isLoading && 'opacity-70 cursor-not-allowed'}`}
+                                    />
+                                    <button
+                                        type="submit"
+                                        className="absolute right-2 top-1.5 px-4 py-1.5 rounded-full bg-cyan-500 hover:bg-cyan-600 text-white text-[14px] font-semibold transition-colors disabled:bg-slate-400"
+                                        onClick={handleReplySubmit}
+                                        disabled={reply === "" || isLoading}
+                                    >
+                                        {isLoading ? "..." : "Send"}
+                                    </button>
+                                </div>
+                            )}
+                         </div>
+                    )}
+                </div>
             </div>
         </div>
     )
@@ -323,7 +453,6 @@ const CommentItem = ({ item, user, courseId, data, activeVideo, refetch }: any) 
     const [replyActive, setReplyActive] = useState(false);
     const [answer, setAnswer] = useState('');
     
-    // Moved Mutation here to isolate state per question
     const [addAnswer, { isSuccess, error, isLoading: answerCreationLoading }] = useAddAnswerMutation();
 
     const handleAnswerSubmit = () => {
@@ -343,7 +472,6 @@ const CommentItem = ({ item, user, courseId, data, activeVideo, refetch }: any) 
         if (isSuccess) {
             setAnswer('');
             toast.success("Reply added successfully");
-            // Refetch parent data to show the new reply
             if (refetch) refetch();
         }
         if (error) {

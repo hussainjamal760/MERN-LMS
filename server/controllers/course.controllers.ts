@@ -341,10 +341,11 @@ export const addReview =CatchAsyncError(async(req:Request,res:Response,next:Next
 
         const courseId = req.params.id
 
-        const courseExists = userCourseList?.some((course:any)=>course._id.toString() === courseId.toString())
+        // Check using courseId string
+        const courseExists = userCourseList?.some((course:any)=> course.courseId === courseId)
 
         if(!courseExists){
-        return next(new ErrorHandler("You are not enrolled in this course" , 404))
+            return next(new ErrorHandler("You are not enrolled in this course" , 404))
         }
 
         const course = await CourseModel.findById(courseId)
@@ -371,10 +372,19 @@ export const addReview =CatchAsyncError(async(req:Request,res:Response,next:Next
 
         await course?.save()
 
+        // IMPORTANT: Clear Redis Cache so new review shows up immediately
+        await redis.del(courseId);
+
         const notification = {
             title:"New Review Received",
             message:`${req.user?.name} has given a review in ${course?.name}`
         }
+
+        await NotificationModel.create({
+            user: req.user?._id,
+            title: notification.title,
+            message: notification.message
+        });
 
         res.status(200).json({
             success:true,
@@ -423,6 +433,9 @@ export const addReplyToReview =CatchAsyncError(async(req:Request,res:Response,ne
         review.commentReplies?.push(replyData);
 
         await course?.save();
+
+        // IMPORTANT: Clear Redis Cache
+        await redis.del(courseId);
 
         res.status(200).json({
             success:true,
