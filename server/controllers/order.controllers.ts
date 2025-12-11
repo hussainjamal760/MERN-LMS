@@ -56,7 +56,8 @@ export const createOrder = CatchAsyncError(async(req:Request , res:Response , ne
                 price:course.price,
                 date:new Date().toLocaleDateString('en-US' , {year:'numeric',month:'long',day:'numeric'})
 
-            }
+            },
+            url: process.env.ORIGIN
         }
 
         const html = await ejs.renderFile(path.join(__dirname , '../mails/order-confirmation.ejs'),mailData)
