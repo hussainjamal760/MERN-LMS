@@ -1,4 +1,3 @@
-// client/redux/features/courses/coursesApi.ts
 
 import {apiSlice} from "../api/apiSlice"
 
@@ -53,6 +52,7 @@ export const coursesApi = apiSlice.injectEndpoints({
       query: (id) => ({
         url: `get-course-content/${id}`,
         method: "GET",
+        credentials: "include" as const,
       }),
     }),
     addQuestion: builder.mutation({

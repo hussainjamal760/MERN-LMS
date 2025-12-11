@@ -1,4 +1,4 @@
-import { useGetCourseContentQuery } from '@/redux/features/courses/coursesApi'; // Path fixed
+import { useGetCourseContentQuery } from '@/redux/features/courses/coursesApi';
 import React, { useState } from 'react'
 import Loader from '../Loader/Loader';
 import Heading from '../../../app/utils/Heading';
@@ -40,6 +40,7 @@ const CourseContent = ({ id, user }: Props) => {
                         setActiveVideo={setActiveVideo}
                         user={user}
                         refetch={refetch}
+                        key={activeVideo} 
                     />
                 </div>
                 <div className="hidden 800px:block 800px:col-span-3">

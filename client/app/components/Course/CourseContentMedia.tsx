@@ -105,10 +105,8 @@ const CourseContentMedia = ({ data, id, activeVideo, setActiveVideo, user, refet
 
     return (
         <div className="w-[95%] 800px:w-[86%] py-6 m-auto">
-            {/* Course Player */}
             <CoursePlayer title={data[activeVideo]?.title} videoUrl={data[activeVideo]?.videoUrl} />
 
-            {/* Navigation Buttons */}
             <div className="w-full flex items-center justify-between my-5 gap-4">
                 <button
                     className={`flex items-center justify-center px-6 py-3 rounded-full bg-gradient-to-r from-cyan-500 to-blue-500 text-white font-semibold shadow-lg hover:shadow-cyan-500/30 hover:-translate-y-1 transition-all duration-300 ${activeVideo === 0 ? "opacity-50 cursor-not-allowed grayscale" : "cursor-pointer"}`}
@@ -126,14 +124,12 @@ const CourseContentMedia = ({ data, id, activeVideo, setActiveVideo, user, refet
                 </button>
             </div>
 
-            {/* Title */}
             <h1 className="pt-2 text-[25px] font-[700] text-black dark:text-white font-Poppins">
                 {data[activeVideo].title}
             </h1>
 
             <br />
 
-            {/* Tabs */}
             <div className="w-full p-4 flex items-center justify-between bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl shadow-sm mb-6">
                 {["Overview", "Resources", "Q&A", "Reviews"].map((text, index) => (
                     <h5
@@ -146,16 +142,13 @@ const CourseContentMedia = ({ data, id, activeVideo, setActiveVideo, user, refet
                 ))}
             </div>
 
-            {/* Content Sections */}
             <div className="min-h-[300px]">
-                {/* Overview */}
                 {activeBar === 0 && (
                     <p className="text-[17px] leading-8 whitespace-pre-line text-slate-700 dark:text-slate-300 font-Poppins animate-in fade-in duration-500">
                         {data[activeVideo]?.description}
                     </p>
                 )}
 
-                {/* Resources */}
                 {activeBar === 1 && (
                     <div className="animate-in fade-in duration-500">
                         {data[activeVideo]?.links.map((item: any, index: number) => (
@@ -171,7 +164,6 @@ const CourseContentMedia = ({ data, id, activeVideo, setActiveVideo, user, refet
                     </div>
                 )}
 
-                {/* Q&A */}
                 {activeBar === 2 && (
                     <div className="animate-in fade-in duration-500">
                         <div className="flex w-full gap-4">

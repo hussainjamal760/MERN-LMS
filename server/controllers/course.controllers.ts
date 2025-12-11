@@ -77,7 +77,6 @@ export const editCourse = CatchAsyncError(async(req:Request,res:Response,next:Ne
             {new:true}
         )
 
-        // FIX: Delete the old cache so the new data is fetched next time
         await redis.del(courseId);
 
         res.status(201).json({
@@ -141,8 +140,8 @@ export const getCourseByUser = CatchAsyncError(async(req:Request,res:Response,ne
         const userCourseList = req.user?.courses;
         const courseId = req.params.id;
 
-        const courseExists = userCourseList?.find(
-            (course:any)=> course._id.toString()=== courseId
+     const courseExists = userCourseList?.find(
+            (course:any)=> course.courseId === courseId
         )
 
         if(!courseExists){
