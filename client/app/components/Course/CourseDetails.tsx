@@ -8,19 +8,28 @@ import { BsShieldCheck } from "react-icons/bs";
 import Link from 'next/link';
 import { IoCheckmarkDoneOutline, IoCloseOutline, IoPeopleOutline } from "react-icons/io5";
 import { format } from 'timeago.js';
+import {Elements} from "@stripe/react-stripe-js"
+import CheckOutForm from "../Payments/CheckOutForm"
 
 type Props = {
   data: any;
+  clientSecret:string,
+  stripePromise:any
 }
 
-const CourseDetails = ({ data }: Props) => {
+const CourseDetails = ({ data , clientSecret ,stripePromise}: Props) => {
   const [isExpanded, setIsExpanded] = useState(false);
+  const [open, setOpen] = useState(false)
 
   const discountPercentage = ((data?.estimatedPrice - data?.price) / data?.estimatedPrice) * 100;
 
   const toggleDescription = () => {
     setIsExpanded(!isExpanded);
   };
+
+  const handleClick = () =>{
+    setOpen(true)
+  }
 
   return (
     <div className="w-[90%] 800px:w-[90%] m-auto py-5">
@@ -146,9 +155,9 @@ const CourseDetails = ({ data }: Props) => {
         </div>
 
         <div className="mt-8 flex flex-col gap-4">
-            <div className="w-full bg-[#37a39a] hover:bg-[#2e8880] text-white py-4 rounded-full cursor-pointer transition-all duration-300 shadow-lg hover:shadow-[#37a39a]/40 transform hover:-translate-y-1 font-Poppins font-bold text-[16px] text-center">
+            <button onClick={()=>handleClick()} className="w-full bg-[#37a39a] hover:bg-[#2e8880] text-white py-4 rounded-full cursor-pointer transition-all duration-300 shadow-lg hover:shadow-[#37a39a]/40 transform hover:-translate-y-1 font-Poppins font-bold text-[16px] text-center">
                 Buy Now for {data?.price === 0 ? "Free" : `$${data?.price}`}
-            </div>
+            </button>
             
             <div className="w-full bg-transparent border-2 border-[#37a39a] hover:bg-[#37a39a] hover:text-white text-[#37a39a] py-3.5 rounded-full cursor-pointer transition-all duration-300 font-Poppins font-semibold text-[16px] text-center">
                     Add to Cart
@@ -180,6 +189,28 @@ const CourseDetails = ({ data }: Props) => {
         </div>
         
       </div>
+      {open && (
+  <div className="w-full h-screen bg-[#00000036] fixed top-0 left-0 z-50 flex items-center justify-center">
+    <div className="w-[500px] min-h-[500px] bg-white rounded-xl shadow p-3">
+      <div className="w-full flex justify-end">
+        <IoCloseOutline
+          size={40}
+          className="text-black cursor-pointer"
+          onClick={() => setOpen(false)}
+        />
+      </div>
+      <div className="w-full">
+        {stripePromise && clientSecret && (
+            <Elements stripe={stripePromise} options={{clientSecret}} >
+                <CheckOutForm setOpen={setOpen} data={data}/>
+            </Elements>
+
+        )}
+      </div>
+    </div>
+
+  </div>
+)}
     </div>
   );
 }
