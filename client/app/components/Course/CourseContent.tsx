@@ -1,5 +1,4 @@
-
-import { useGetCourseContentQuery } from '../../../redux/features/courses/coursesApi';
+import { useGetCourseContentQuery } from '@/redux/features/courses/coursesApi'; // Path fixed
 import React, { useState } from 'react'
 import Loader from '../Loader/Loader';
 import Heading from '../../../app/utils/Heading';

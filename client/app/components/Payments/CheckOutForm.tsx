@@ -2,6 +2,7 @@ import { useLoadUserQuery } from '@/redux/features/api/apiSlice';
 import { useCreateOrderMutation } from '@/redux/features/orders/ordersApi';
 import { PaymentElement, useElements, useStripe } from '@stripe/react-stripe-js';
 import React, { useEffect, useState } from 'react'
+import toast from 'react-hot-toast';
 
 type Props = {
     setOpen: any,
@@ -42,6 +43,7 @@ const CheckOutForm = ({ setOpen, data }: Props) => {
         if (orderData) {
             setLoadUser(true);
             setOpen(false);
+            toast.success("Payment successful, email sent");
         }
         if (orderError && 'data' in orderError) {
              const errorData = orderError.data as any;

@@ -1,26 +1,23 @@
-
 'use client'
 import React, { useEffect } from 'react'
 import Loader from "../../components/Loader/Loader"
-import { useLoadUserQuery } from "../../redux/features/api/apiSlice"
-import { redirect } from "next/navigation"
+import { useLoadUserQuery } from "@/redux/features/api/apiSlice"
+import { redirect, useParams } from "next/navigation" 
 import CourseContent from "../../components/Course/CourseContent"
 
-type Props = {
-    params: any
-}
+type Props = {} 
 
-const Page = ({ params }: Props) => {
-    const id = params.id;
+const Page = (props: Props) => {
+    const { id } = useParams() as any; 
+    
     const { isLoading, error, data } = useLoadUserQuery(undefined, {});
-
     useEffect(() => {
         if (!isLoading && !data?.user) {
             redirect("/");
         }
-    }, [data, error, isLoading]);
+    }, [data, error, isLoading]); 
 
-    if (isLoading) {
+   if (isLoading || !data || !data.user) { 
         return <Loader />
     }
 
