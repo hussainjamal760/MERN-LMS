@@ -489,8 +489,6 @@ export const deleteCourse = CatchAsyncError(
 export const generateVideoUrl = CatchAsyncError(async(req:Request, res:Response, next:NextFunction) => {
     try {
         const {videoId} = req.body;
-        console.log(`[VdoCipher API] Request received for video ID: ${videoId}`);
-        console.log(`[VdoCipher API] Using Secret: ${process.env.VDOCIPHER_API_SECRET ? 'Loaded' : '!!! MISSING / UNDEFINED !!!'}`);
 
         const response = await axios.post(
             `https://dev.vdocipher.com/api/videos/${videoId}/otp`,
@@ -506,26 +504,7 @@ export const generateVideoUrl = CatchAsyncError(async(req:Request, res:Response,
 
         res.json(response.data);
     } catch (error:any) {
-        console.error("=================================================");
-        console.error("🚨 VdoCipher API Call Failed 🚨");
         
-        if (error.response) {
-            console.error("VdoCipher Response Status:", error.response.status); 
-            console.error("VdoCipher Error Data:", error.response.data);
-            console.error("Request URL:", error.config.url);
-            
-            if (error.response.status === 401) {
-                console.warn("HINT: 401 Unauthorized likely means the VDOCIPHER_API_SECRET is wrong or expired.");
-            } else if (error.response.status === 404) {
-                console.warn("HINT: 404 Not Found likely means the video ID is incorrect or not yet processed by VdoCipher.");
-            }
-        } else if (error.request) {
-            console.error("Network or No Response Received:", error.message);
-        } else {
-            console.error("General Axios Error:", error.message);
-        }
-        console.error("=================================================");
-       
         return next(new ErrorHandler("Video OTP generation failed. Check server logs for details.", 400))
     }
 })
