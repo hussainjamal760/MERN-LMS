@@ -14,8 +14,6 @@ import NotificationModel from '../models/notification.model'
 import axios from 'axios'
 import { io } from "../socketServer";
 
-
-
 export const uploadCourse = CatchAsyncError(async(req:Request,res:Response,next:NextFunction)=>{
     try {
         const data = req.body;
@@ -38,7 +36,6 @@ export const uploadCourse = CatchAsyncError(async(req:Request,res:Response,next:
         return next(new ErrorHandler(error.message , 400))
     }
 })
-
 
 export const editCourse = CatchAsyncError(async(req:Request,res:Response,next:NextFunction)=>{
     try {
@@ -91,8 +88,6 @@ export const editCourse = CatchAsyncError(async(req:Request,res:Response,next:Ne
     }
 })
 
-
-
 export const getAllCourse = CatchAsyncError(async(req:Request,res:Response,next:NextFunction)=>{
     try {
           
@@ -133,8 +128,6 @@ export const getSingleCourse = CatchAsyncError(async(req:Request,res:Response,ne
         return next(new ErrorHandler(error.message , 400))
     }
 })
-
-
 
 export const getCourseByUser = CatchAsyncError(async(req:Request,res:Response,next:NextFunction)=>{
     try {
@@ -212,18 +205,11 @@ export const addQuestion = CatchAsyncError(async(req:Request,res:Response,next:N
         courseContent.questions.push(newQuestion as any)
 
         await NotificationModel.create({
-            user:req.user?._id,
+            userId: req.user?._id,
             title:"New question received",
             message:`You have a new question in ${courseContent.title}`,
         })
-
-        await NotificationModel.create({
-            user: req.user?._id,
-            title: "New Question Received",
-            message: `You have a new question in ${courseContent.title}`,
-        });
         
-        // Notify Admin
         if (io) {
             io.emit("newNotification", {
                 title: "New Question Received",
@@ -313,7 +299,7 @@ export const addAnswer = CatchAsyncError(async(req:Request,res:Response,next:Nex
 
         if (req.user?._id.toString() === questionUserId) {
             await NotificationModel.create({
-            user:req.user?._id,
+            userId: req.user?._id,
             title:"New question reply received",
             message:`You have a new question reply in ${courseContent.title}`,
         })
@@ -344,13 +330,11 @@ export const addAnswer = CatchAsyncError(async(req:Request,res:Response,next:Nex
         }
 
         await NotificationModel.create({
-            user: req.user?._id,
+            userId: req.user?._id,
             title: "New Question Received",
             message: `You have a new question in ${courseContent.title}`,
         });
         
-     
-
         res.status(200).json({
             success: true,
             course
@@ -373,7 +357,6 @@ export const addReview =CatchAsyncError(async(req:Request,res:Response,next:Next
 
         const courseId = req.params.id
 
-        // Check using courseId string
         const courseExists = userCourseList?.some((course:any)=> course.courseId === courseId)
 
         if(!courseExists){
@@ -412,14 +395,9 @@ export const addReview =CatchAsyncError(async(req:Request,res:Response,next:Next
         }
 
         await NotificationModel.create({
-            user: req.user?._id,
+            userId: req.user?._id,
             title: notification.title,
             message: notification.message
-        });
-  await NotificationModel.create({
-            user: req.user?._id,
-            title: "New Review Received",
-            message: `${req.user?.name} has given a review in ${course?.name}`
         });
         
        if (io) {
@@ -478,7 +456,6 @@ export const addReplyToReview =CatchAsyncError(async(req:Request,res:Response,ne
 
         await course?.save();
 
-        // IMPORTANT: Clear Redis Cache
         await redis.del(courseId);
 
         res.status(200).json({
@@ -528,8 +505,6 @@ export const deleteCourse = CatchAsyncError(
     }
 )
 
-
-// generate video url
 export const generateVideoUrl = CatchAsyncError(async(req:Request, res:Response, next:NextFunction) => {
     try {
         const {videoId} = req.body;

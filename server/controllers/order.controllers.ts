@@ -81,14 +81,9 @@ export const createOrder = CatchAsyncError(async(req:Request , res:Response , ne
 
             await user?.save()
 
+            // FIXED: Removed Duplicate & changed user to userId
             await NotificationModel.create({
-                user:user?._id,
-                title:"New Order",
-                message:`You have a new order from ${course?.name}`,
-            })
-
-            await NotificationModel.create({
-                user: user?._id,
+                userId: user?._id,
                 title: "New Order",
                 message: `You have a new order from ${course?.name}`,
             });

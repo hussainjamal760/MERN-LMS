@@ -3,7 +3,7 @@ import { apiSlice } from "../api/apiSlice";
 export const notificationsApi = apiSlice.injectEndpoints({
     overrideExisting:true,
     endpoints: (builder) => ({
-        getHeroData: builder.query({
+        getNotifications: builder.query({
             query: () => ({
                 url: "get-notifications",
                 method: "GET",
@@ -18,4 +18,4 @@ export const notificationsApi = apiSlice.injectEndpoints({
     }),
 });
 
-export const { useGetHeroDataQuery, useUpdateNotificationStatusMutation } = notificationsApi;
+export const { useGetNotificationsQuery, useUpdateNotificationStatusMutation } = notificationsApi;

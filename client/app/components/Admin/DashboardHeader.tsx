@@ -4,7 +4,7 @@ import { useTheme } from 'next-themes'
 import { HiOutlineBell, HiOutlineSun, HiOutlineMoon } from 'react-icons/hi'
 import Link from 'next/link'
 import socketIO from "socket.io-client";
-import { useGetHeroDataQuery, useUpdateNotificationStatusMutation } from '@/redux/features/notifications/notificationsApi';
+import { useGetNotificationsQuery, useUpdateNotificationStatusMutation } from '../../../redux/features/notifications/notificationsApi';
 import { format } from "timeago.js";
 
 const ENDPOINT = process.env.NEXT_PUBLIC_SOCKET_SERVER_URI || "";
@@ -20,15 +20,16 @@ const DashboardHeader = ({ open, setOpen }: Props) => {
     const [internalOpen, setInternalOpen] = useState(false);
     const isDropdownOpen = open !== undefined ? open : internalOpen;
     
-    // API Hooks
-    const { data, refetch } = useGetHeroDataQuery(undefined, {
+    // API Hooks - UPDATED HOOK HERE
+    const { data, refetch } = useGetNotificationsQuery(undefined, {
         refetchOnMountOrArgChange: true,
     });
+    
     const [updateNotificationStatus, { isSuccess }] = useUpdateNotificationStatusMutation();
     
     // State
     const [notifications, setNotifications] = useState<any[]>([]);
-    const [audio] = useState(new Audio('https://res.cloudinary.com/damk25wo5/video/upload/v1693425789/notification_sound_y4f7hc.mp3')); // You can replace this with a local file in public folder
+    const [audio] = useState(new Audio('https://res.cloudinary.com/damk25wo5/video/upload/v1693425789/notification_sound_y4f7hc.mp3'));
 
     const handleToggle = () => {
         if (setOpen) {
@@ -44,7 +45,7 @@ const DashboardHeader = ({ open, setOpen }: Props) => {
 
     // Effect to set initial notifications from API
     useEffect(() => {
-        if (data && data.notification) {
+        if (data && data.notification) { //Backend returns {success:true, notification: []}
             setNotifications(data.notification.filter((item: any) => item.status === "unread"));
         }
         if (isSuccess) {

@@ -4,7 +4,7 @@ import ErrorHandler from "../utils/ErrorHandler"
 import NotificationModel from "../models/notification.model"
 import cron from 'node-cron'
 
-export const getNotification = CatchAsyncError(async ( res: Response,req:Request,next:NextFunction)=>{
+export const getNotification = CatchAsyncError(async (req:Request, res: Response,next:NextFunction)=>{
     try {
         const notification = await NotificationModel.find().sort({createdAt:-1})
         
@@ -18,7 +18,7 @@ export const getNotification = CatchAsyncError(async ( res: Response,req:Request
     }
 })
 
-export const updateNotification = CatchAsyncError(async ( res: Response,req:Request,next:NextFunction)=>{
+export const updateNotification = CatchAsyncError(async(req:Request, res: Response,next:NextFunction)=>{
     try {
         const notification = await NotificationModel.findById(req.params.id)
 
