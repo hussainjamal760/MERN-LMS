@@ -10,6 +10,7 @@ type Props = {}
 const page = (props: Props) => {
   return (
     <div className="h-screen overflow-hidden">
+      
         <AdminProtected>
             <Heading
                 title='SheepAcademy - Admin'
@@ -33,6 +34,7 @@ const page = (props: Props) => {
                    </div>
                 </div>
             </div>
+            
         </AdminProtected>
     </div>
   )

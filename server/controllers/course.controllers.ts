@@ -203,21 +203,28 @@ export const addQuestion = CatchAsyncError(async(req:Request,res:Response,next:N
 
        
         courseContent.questions.push(newQuestion as any)
+await NotificationModel.create({
+    userId: req.user?._id,
+    title:"New question received",
+    message:`You have a new question in ${courseContent.title}`,
+})
 
-        await NotificationModel.create({
-            userId: req.user?._id,
-            title:"New question received",
-            message:`You have a new question in ${courseContent.title}`,
-        })
-        
-        if (io) {
-            io.emit("newNotification", {
-                title: "New Question Received",
-                message: `You have a new question in ${courseContent.title}`,
-                createdAt: new Date().toISOString()
-            });
-        }
+console.log("📡 About to emit notification...");
+console.log("io exists?", !!io);
+console.log("Connected clients:", io?.engine?.clientsCount);
 
+if (io) {
+    const notif = {
+        title: "New Question Received",
+        message: `You have a new question in ${courseContent.title}`,
+        status: "unread",
+        createdAt: new Date().toISOString()
+    };
+    
+    io.emit("newNotification", notif);
+    console.log("🔔 Emitted notification:", notif);
+    console.log("📊 Total sockets:", io.sockets.sockets.size);
+}
         await course?.save()
 
         res.status(200).json({
@@ -391,9 +398,15 @@ export const addReview =CatchAsyncError(async(req:Request,res:Response,next:Next
             message: `${req.user?.name} has given a review in ${course?.name}`
         });
         
-       if (io) {
-            io.emit("newNotification", notification); // Send the DB object, not a custom object
-        }
+      if (io) {
+    io.emit("newNotification", {
+        _id: notification._id,
+        title: notification.title,
+        message: notification.message,
+        status: notification.status,
+    });
+    console.log("🔔 Emitting review notification");
+}
 
         res.status(200).json({
             success:true,

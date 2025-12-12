@@ -90,10 +90,14 @@ export const createOrder = CatchAsyncError(async(req:Request , res:Response , ne
                 message: `You have a new order from ${course?.name}`,
             });
 
-            if (io) {
-                // Emit the actual notification object (which includes _id)
-                io.emit("newNotification", notification);
-            }
+         if (io) {
+    io.emit("newNotification", {
+        _id: notification._id,
+        title: notification.title,
+        message: notification.message,
+        status: notification.status,
+    });
+}
             
 
 

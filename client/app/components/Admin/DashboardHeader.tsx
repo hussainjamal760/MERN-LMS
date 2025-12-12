@@ -2,13 +2,9 @@
 import React, { useState, useEffect } from 'react'
 import { useTheme } from 'next-themes'
 import { HiOutlineBell, HiOutlineSun, HiOutlineMoon } from 'react-icons/hi'
-import Link from 'next/link'
-import socketIO from "socket.io-client";
+import { getSocket } from '../../utils/socket'; // Import getter function
 import { useGetNotificationsQuery, useUpdateNotificationStatusMutation } from '../../../redux/features/notifications/notificationsApi';
 import { format } from "timeago.js";
-
-const ENDPOINT = process.env.NEXT_PUBLIC_SOCKET_SERVER_URI || "";
-const socketId = socketIO(ENDPOINT, { transports: ["websocket"] });
 
 type Props = {
     open?: boolean;
@@ -20,16 +16,23 @@ const DashboardHeader = ({ open, setOpen }: Props) => {
     const [internalOpen, setInternalOpen] = useState(false);
     const isDropdownOpen = open !== undefined ? open : internalOpen;
     
-    // API Hooks - UPDATED HOOK HERE
+    // Polling every 5 seconds as backup
     const { data, refetch } = useGetNotificationsQuery(undefined, {
+        pollingInterval: 5000,
         refetchOnMountOrArgChange: true,
+        refetchOnFocus: true,
+        refetchOnReconnect: true,
     });
     
     const [updateNotificationStatus, { isSuccess }] = useUpdateNotificationStatusMutation();
     
     // State
     const [notifications, setNotifications] = useState<any[]>([]);
-    const [audio] = useState(new Audio('https://res.cloudinary.com/damk25wo5/video/upload/v1693425789/notification_sound_y4f7hc.mp3'));
+    const [audio] = useState(
+        typeof window !== 'undefined' 
+            ? new Audio('https://res.cloudinary.com/damk25wo5/video/upload/v1693425789/notification_sound_y4f7hc.mp3')
+            : null
+    );
 
     const handleToggle = () => {
         if (setOpen) {
@@ -45,28 +48,49 @@ const DashboardHeader = ({ open, setOpen }: Props) => {
 
     // Effect to set initial notifications from API
     useEffect(() => {
-        if (data && data.notification) { //Backend returns {success:true, notification: []}
-            setNotifications(data.notification.filter((item: any) => item.status === "unread"));
+        if (data && data.notifications) {
+            setNotifications(data.notifications.filter((item: any) => item.status === "unread"));
         }
         if (isSuccess) {
             refetch();
         }
     }, [data, isSuccess, refetch]);
 
-    // Socket.io Real-time Listener
+    // Socket.io Real-time Listener - Use singleton socket
     useEffect(() => {
-        socketId.on("newNotification", (data) => {
-            refetch(); // Fetch latest data from DB
-            playNotificationSound();
-        });
+        const socket = getSocket();
+        
+        if (!socket) {
+            console.warn("⚠️ Socket not initialized yet");
+            return;
+        }
 
+        console.log("🎧 Setting up notification listener on socket:", socket.id);
+        
+        const handleNewNotification = (notification: any) => {
+            console.log("🔔 RECEIVED notification in DashboardHeader:", notification);
+            refetch(); // Refetch latest data from DB
+            playNotificationSound();
+        };
+
+        // Listen for new notifications
+        socket.on("newNotification", handleNewNotification);
+
+        // Verify listener is attached
+        const listenerCount = socket.listeners("newNotification").length;
+        console.log("📡 Total 'newNotification' listeners:", listenerCount);
+
+        // Cleanup
         return () => {
-            socketId.off("newNotification");
+            console.log("🧹 Removing notification listener");
+            socket.off("newNotification", handleNewNotification);
         };
     }, [refetch]);
 
     const playNotificationSound = () => {
-        audio.play().catch(error => console.log("Audio play failed", error));
+        if (audio) {
+            audio.play().catch(error => console.log("Audio play failed", error));
+        }
     }
 
     return (
@@ -103,31 +127,41 @@ const DashboardHeader = ({ open, setOpen }: Props) => {
                             <h5 className="text-[18px] font-Poppins font-semibold text-black dark:text-white">
                                 Notifications
                             </h5>
-                            <p className="text-xs text-[#37a39a] cursor-pointer hover:underline mt-1" onClick={() => {/* Mark all logic */}}>
-                                Mark all as read
+                            <p className="text-xs text-[#37a39a] cursor-pointer hover:underline mt-1">
+                                {notifications.length} unread
                             </p>
                         </div>
 
                         <div className="max-h-[300px] overflow-y-auto custom-scrollbar">
-                            {notifications && notifications.map((item, index) => (
-                                <div key={index} className="flex items-start p-3 border-b border-gray-100 dark:border-[#ffffff1d] hover:bg-gray-50 dark:hover:bg-[#ffffff12] transition-colors cursor-pointer group">
-                                    <div className="flex-shrink-0 w-10 h-10 rounded-full bg-gradient-to-br from-[#37a39a] to-cyan-500 flex items-center justify-center text-white font-bold shadow-md">
-                                        {item.title ? item.title.charAt(0) : "N"}
+                            {notifications && notifications.length > 0 ? (
+                                notifications.map((item, index) => (
+                                    <div 
+                                        key={index} 
+                                        className="flex items-start p-3 border-b border-gray-100 dark:border-[#ffffff1d] hover:bg-gray-50 dark:hover:bg-[#ffffff12] transition-colors cursor-pointer group"
+                                        onClick={() => handleNotificationStatusChange(item._id)}
+                                    >
+                                        <div className="flex-shrink-0 w-10 h-10 rounded-full bg-gradient-to-br from-[#37a39a] to-cyan-500 flex items-center justify-center text-white font-bold shadow-md">
+                                            {item.title ? item.title.charAt(0) : "N"}
+                                        </div>
+                                        
+                                        <div className="ml-3 w-full">
+                                            <h6 className="text-[14px] font-medium text-gray-800 dark:text-gray-200 group-hover:text-[#37a39a] transition-colors">
+                                                {item.title}
+                                            </h6>
+                                            <p className="text-[12px] text-gray-500 dark:text-gray-400 mt-1 line-clamp-2">
+                                                {item.message}
+                                            </p>
+                                            <p className="text-[10px] text-gray-400 mt-1">
+                                                {format(item.createdAt)}
+                                            </p>
+                                        </div>
                                     </div>
-                                    
-                                    <div className="ml-3 w-full" onClick={() => handleNotificationStatusChange(item._id)}>
-                                        <h6 className="text-[14px] font-medium text-gray-800 dark:text-gray-200 group-hover:text-[#37a39a] transition-colors">
-                                            {item.title}
-                                        </h6>
-                                        <p className="text-[12px] text-gray-500 dark:text-gray-400 mt-1 line-clamp-2">
-                                            {item.message}
-                                        </p>
-                                        <p className="text-[10px] text-gray-400 mt-1">
-                                            {format(item.createdAt)}
-                                        </p>
-                                    </div>
+                                ))
+                            ) : (
+                                <div className="p-6 text-center">
+                                    <p className="text-gray-500 dark:text-gray-400">No new notifications</p>
                                 </div>
-                            ))}
+                            )}
                         </div>
                     </div>
                 )}

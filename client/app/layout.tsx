@@ -9,9 +9,7 @@ import { SessionProvider } from 'next-auth/react';
 import { useLoadUserQuery } from '@/redux/features/api/apiSlice';
 import Loader from './components/Loader/Loader';
 import React, { useState, useEffect } from 'react';
-import socketIO from "socket.io-client"
-const ENDPOINT = process.env.NEXT_PUBLIC_SOCKET_SERVER_URI || "";
-const socketId = socketIO(ENDPOINT , {transports : ["websocket"]})
+import { socketService } from './utils/socket'; // Import socket service
 
 const poppins = Poppins({
   subsets: ["latin"],
@@ -64,9 +62,18 @@ const Custom : React.FC<{children : React.ReactNode}> = ({children})=>{
     setMounted(true);
   }, []);
 
-  useEffect(()=>{
-    socketId.on("connection" , ()=> {})
-  })
+  // Initialize socket connection ONCE when app mounts
+  useEffect(() => {
+    if (mounted) {
+      console.log("🎯 Initializing global socket connection...");
+      socketService.initialize();
+      
+      return () => {
+        // Cleanup on unmount
+        console.log("🧹 Cleaning up socket on unmount");
+      };
+    }
+  }, [mounted]);
 
   if (!mounted) {
     return <>{children}</>;
