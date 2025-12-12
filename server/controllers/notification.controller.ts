@@ -6,11 +6,11 @@ import cron from 'node-cron'
 
 export const getNotification = CatchAsyncError(async (req:Request, res: Response,next:NextFunction)=>{
     try {
-        const notification = await NotificationModel.find().sort({createdAt:-1})
+        const notifications = await NotificationModel.find().sort({createdAt:-1})
         
         res.status(201).json({
             success:true,
-            notification
+            notifications
         })
 
     } catch (error:any) {

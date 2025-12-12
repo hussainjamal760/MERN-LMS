@@ -72,6 +72,10 @@ export const createOrder = CatchAsyncError(async(req:Request , res:Response , ne
                     data:mailData
                 })
             }
+            
+        } catch (error:any) {
+        return next(new ErrorHandler(error.message,500))
+        }
 
             if (user && course?._id) {
                  user.courses.push({ courseId: course._id.toString() });
@@ -80,26 +84,18 @@ export const createOrder = CatchAsyncError(async(req:Request , res:Response , ne
                 await redis.set(req.user?._id , JSON.stringify(user))
 
             await user?.save()
-
-            // FIXED: Removed Duplicate & changed user to userId
-            await NotificationModel.create({
+            const notification = await NotificationModel.create({
                 userId: user?._id,
                 title: "New Order",
                 message: `You have a new order from ${course?.name}`,
             });
 
             if (io) {
-                io.emit("newNotification", {
-                    title: "New Order",
-                    message: `You have a new order from ${course?.name}`,
-                    createdAt: new Date().toISOString()
-                });
+                // Emit the actual notification object (which includes _id)
+                io.emit("newNotification", notification);
             }
             
 
-        } catch (error:any) {
-        return next(new ErrorHandler(error.message,500))
-        }
 
         course.purchased = course.purchased + 1;
 

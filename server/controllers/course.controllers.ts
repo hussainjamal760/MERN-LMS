@@ -329,11 +329,6 @@ export const addAnswer = CatchAsyncError(async(req:Request,res:Response,next:Nex
             }
         }
 
-        await NotificationModel.create({
-            userId: req.user?._id,
-            title: "New Question Received",
-            message: `You have a new question in ${courseContent.title}`,
-        });
         
         res.status(200).json({
             success: true,
@@ -389,23 +384,15 @@ export const addReview =CatchAsyncError(async(req:Request,res:Response,next:Next
 
         await redis.del(courseId);
 
-        const notification = {
-            title:"New Review Received",
-            message:`${req.user?.name} has given a review in ${course?.name}`
-        }
-
-        await NotificationModel.create({
+      
+       const notification = await NotificationModel.create({
             userId: req.user?._id,
-            title: notification.title,
-            message: notification.message
+            title: "New Review Received",
+            message: `${req.user?.name} has given a review in ${course?.name}`
         });
         
        if (io) {
-            io.emit("newNotification", {
-                title: "New Review Received",
-                message: `${req.user?.name} has given a review in ${course?.name}`,
-                createdAt: new Date().toISOString()
-            });
+            io.emit("newNotification", notification); // Send the DB object, not a custom object
         }
 
         res.status(200).json({
