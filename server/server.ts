@@ -1,9 +1,12 @@
 import {app} from './app';
+import { initSocketServer } from './socketServer';
 require("dotenv").config();
 import connectDB from './utils/db'
 import {v2 as cloudinary} from 'cloudinary'
 import http from "http"
 const server = http.createServer(app)
+
+initSocketServer(server);
 
 cloudinary.config({
     cloud_name:process.env.CLOUD_NAME,

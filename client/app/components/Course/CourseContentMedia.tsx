@@ -487,7 +487,7 @@ const CommentItem = ({ item, user, courseId, data, activeVideo, refetch }: any) 
             <div className="flex mb-4 gap-4">
                 <div className='shrink-0'>
                     <Image
-                        src={item.user.avatar ? item.user.avatar.url : "/avatar.png"}
+                        src={item?.user?.avatar ? item?.user?.avatar?.url : "/avatar.png"}
                         width={50}
                         height={50}
                         alt=""
@@ -497,7 +497,7 @@ const CommentItem = ({ item, user, courseId, data, activeVideo, refetch }: any) 
                 <div className="w-full">
                     <div className='flex items-center justify-between mb-1'>
                         <h5 className="text-[18px] font-semibold text-black dark:text-white font-Poppins">
-                            {item?.user.name}
+                            {item?.user?.name}
                         </h5>
                         <small className="text-slate-500 dark:text-slate-400">
                             {format(item.createdAt)}
