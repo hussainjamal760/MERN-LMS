@@ -3,7 +3,7 @@ import { CatchAsyncError } from "../middleware/CatchAsyncErrors";
 import ErrorHandler from "../utils/ErrorHandler";
 import { IOrder } from "../models/order.model";
 import userModel from "../models/user.model";
-import CourseModel from "../models/course.model";
+import CourseModel, { ICourse } from "../models/course.model";
 import ejs from "ejs"
 import path from "path";
 import sendMail from "../utils/sendMail";
@@ -37,7 +37,7 @@ export const createOrder = CatchAsyncError(async(req:Request , res:Response , ne
         return next(new ErrorHandler("You have already purchased this course",404))
         }
 
-        const course = await CourseModel.findById(courseId)
+        const course:ICourse | null = await CourseModel.findById(courseId)
 
         if(!course){
             return next(new ErrorHandler("Course not found",500))
@@ -91,7 +91,7 @@ export const createOrder = CatchAsyncError(async(req:Request , res:Response , ne
         return next(new ErrorHandler(error.message,500))
         }
 
-        course.purchased ? course.purchased +=1 : course.purchased
+        course.purchased = course.purchased + 1;
 
         newOrder(data , res , next)
 
