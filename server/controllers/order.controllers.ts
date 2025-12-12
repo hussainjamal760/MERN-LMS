@@ -12,6 +12,7 @@ import { getAllOrdersService, newOrder } from "../services/order.service";
 import { redis } from "../utils/redis";
 require("dotenv").config();
 const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY)
+import { io } from "../socketServer"; 
 
 export const createOrder = CatchAsyncError(async(req:Request , res:Response , next:NextFunction)=>{
     try {
@@ -85,6 +86,20 @@ export const createOrder = CatchAsyncError(async(req:Request , res:Response , ne
                 title:"New Order",
                 message:`You have a new order from ${course?.name}`,
             })
+
+            await NotificationModel.create({
+                user: user?._id,
+                title: "New Order",
+                message: `You have a new order from ${course?.name}`,
+            });
+
+            if (io) {
+                io.emit("newNotification", {
+                    title: "New Order",
+                    message: `You have a new order from ${course?.name}`,
+                    createdAt: new Date().toISOString()
+                });
+            }
             
 
         } catch (error:any) {

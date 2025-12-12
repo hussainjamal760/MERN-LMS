@@ -1,8 +1,10 @@
 import { Server as SocketIOServer } from "socket.io";
 import http from "http";
 
+export let io: SocketIOServer;
+
 export const initSocketServer = (server: http.Server) => {
-  const io = new SocketIOServer(server);
+  io = new SocketIOServer(server);
 
   io.on("connection", (socket) => {
     console.log("A user connected");
