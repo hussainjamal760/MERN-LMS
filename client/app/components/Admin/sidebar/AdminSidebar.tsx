@@ -11,7 +11,8 @@ import {
     FaBox,
     FaChartLine,
     FaQuestion,
-    FaImage
+    FaImage,
+    FaDoorOpen
 } from 'react-icons/fa'
 
 type Props = {}
@@ -97,6 +98,9 @@ const [mounted, setMounted] = useState(false)
                 <SidebarItem title="Courses Stats" icon={<FaChartBar size={20} />} to="/admin/courses-analytics" isCollapsed={isCollapsed} hoverClass={glassHover} />
                 <SidebarItem title="Users Stats" icon={<FaChartLine size={20} />} to="/admin/users-analytics" isCollapsed={isCollapsed} hoverClass={glassHover} />
                 <SidebarItem title="Orders Stats" icon={<FaChartPie size={20} />} to="/admin/orders-analytics" isCollapsed={isCollapsed} hoverClass={glassHover} />
+
+                <SectionLabel label="Back To" isCollapsed={isCollapsed} />
+                <SidebarItem title="Home" icon={<FaDoorOpen size={20} />} to="/" isCollapsed={isCollapsed} hoverClass={glassHover} />
 
              </div>
 

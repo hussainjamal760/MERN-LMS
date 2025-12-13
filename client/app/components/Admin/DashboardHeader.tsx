@@ -16,7 +16,6 @@ const DashboardHeader = ({ open, setOpen }: Props) => {
     const [internalOpen, setInternalOpen] = useState(false);
     const isDropdownOpen = open !== undefined ? open : internalOpen;
     
-    // Polling every 5 seconds as backup
     const { data, refetch } = useGetNotificationsQuery(undefined, {
         pollingInterval: 5000,
         refetchOnMountOrArgChange: true,
@@ -30,7 +29,7 @@ const DashboardHeader = ({ open, setOpen }: Props) => {
     const [notifications, setNotifications] = useState<any[]>([]);
     const [audio] = useState(
         typeof window !== 'undefined' 
-            ? new Audio('https://res.cloudinary.com/damk25wo5/video/upload/v1693425789/notification_sound_y4f7hc.mp3')
+            ? new Audio('/notification.mp3')
             : null
     );
 
@@ -87,11 +86,45 @@ const DashboardHeader = ({ open, setOpen }: Props) => {
         };
     }, [refetch]);
 
-    const playNotificationSound = () => {
+   const playNotificationSound = () => {
         if (audio) {
-            audio.play().catch(error => console.log("Audio play failed", error));
+            audio.play().catch(error => {
+                // Sirf tab log karein agar error NotAllowedError NA ho (optional)
+                if (error.name !== 'NotAllowedError') {
+                    console.log("Audio play failed", error);
+                }
+            });
         }
     }
+
+    useEffect(() => {
+        const unlockAudio = () => {
+            if (audio) {
+                // Play and immediately pause to unlock audio context
+                audio.play().then(() => {
+                    audio.pause();
+                    audio.currentTime = 0;
+                }).catch((error) => {
+                    // Ignore unlock errors
+                });
+            }
+            // Listener remove karein taake ye sirf aik baar run ho
+            document.removeEventListener('click', unlockAudio);
+            document.removeEventListener('keydown', unlockAudio);
+            document.removeEventListener('touchstart', unlockAudio);
+        };
+
+        // User interaction listeners add karein
+        document.addEventListener('click', unlockAudio);
+        document.addEventListener('keydown', unlockAudio);
+        document.addEventListener('touchstart', unlockAudio);
+
+        return () => {
+            document.removeEventListener('click', unlockAudio);
+            document.removeEventListener('keydown', unlockAudio);
+            document.removeEventListener('touchstart', unlockAudio);
+        };
+    }, [audio]);
 
     return (
         <div className="w-full flex items-center justify-end p-6 fixed top-0 right-0 z-[999] pointer-events-none">
@@ -132,37 +165,48 @@ const DashboardHeader = ({ open, setOpen }: Props) => {
                             </p>
                         </div>
 
-                        <div className="max-h-[300px] overflow-y-auto custom-scrollbar">
-                            {notifications && notifications.length > 0 ? (
-                                notifications.map((item, index) => (
-                                    <div 
-                                        key={index} 
-                                        className="flex items-start p-3 border-b border-gray-100 dark:border-[#ffffff1d] hover:bg-gray-50 dark:hover:bg-[#ffffff12] transition-colors cursor-pointer group"
-                                        onClick={() => handleNotificationStatusChange(item._id)}
-                                    >
-                                        <div className="flex-shrink-0 w-10 h-10 rounded-full bg-gradient-to-br from-[#37a39a] to-cyan-500 flex items-center justify-center text-white font-bold shadow-md">
-                                            {item.title ? item.title.charAt(0) : "N"}
-                                        </div>
-                                        
-                                        <div className="ml-3 w-full">
-                                            <h6 className="text-[14px] font-medium text-gray-800 dark:text-gray-200 group-hover:text-[#37a39a] transition-colors">
-                                                {item.title}
-                                            </h6>
-                                            <p className="text-[12px] text-gray-500 dark:text-gray-400 mt-1 line-clamp-2">
-                                                {item.message}
-                                            </p>
-                                            <p className="text-[10px] text-gray-400 mt-1">
-                                                {format(item.createdAt)}
-                                            </p>
-                                        </div>
-                                    </div>
-                                ))
-                            ) : (
-                                <div className="p-6 text-center">
-                                    <p className="text-gray-500 dark:text-gray-400">No new notifications</p>
-                                </div>
-                            )}
-                        </div>
+
+<div className="max-h-[300px] overflow-y-auto custom-scrollbar">
+    {notifications && notifications.length > 0 ? (
+        notifications.map((item, index) => (
+            <div 
+                key={index} 
+                className="flex items-start p-3 border-b border-gray-100 dark:border-[#ffffff1d] hover:bg-gray-50 dark:hover:bg-[#ffffff12] transition-colors cursor-default"
+            >
+                <div className="flex-shrink-0 w-10 h-10 rounded-full bg-gradient-to-br from-[#37a39a] to-cyan-500 flex items-center justify-center text-white font-bold shadow-md">
+                    {item.title ? item.title.charAt(0) : "N"}
+                </div>
+                
+                <div className="ml-3 w-full">
+                    <h6 className="text-[14px] font-medium text-gray-800 dark:text-gray-200">
+                        {item.title}
+                    </h6>
+                    <p className="text-[12px] text-gray-500 dark:text-gray-400 mt-1 line-clamp-2">
+                        {item.message}
+                    </p>
+                    <p className="text-[10px] text-gray-400 mt-1">
+                        {format(item.createdAt)}
+                    </p>
+
+                    {/* 👇 Change 2: Ye naya button add kiya hai, ab click sirf yahan kaam karega */}
+                    <div className="flex justify-end mt-2">
+                        <span 
+                            className="text-[12px] text-[#37a39a] cursor-pointer hover:underline font-medium"
+                            onClick={() => handleNotificationStatusChange(item._id)}
+                        >
+                            Mark as read
+                        </span>
+                    </div>
+                </div>
+            </div>
+        ))
+    ) : (
+        <div className="p-6 text-center">
+            <p className="text-gray-500 dark:text-gray-400">No new notifications</p>
+        </div>
+    )}
+</div>
+
                     </div>
                 )}
             </div>

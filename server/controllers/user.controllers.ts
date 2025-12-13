@@ -7,10 +7,11 @@ import jwt, { JwtPayload, Secret } from 'jsonwebtoken'
 import ejs from "ejs"
 import path from 'path';
 import sendMail from '../utils/sendMail';
-import {accessTokenOptions, refreshTokenOptions, sendToken} from "../utils/jwt"
+// import accessTokenOptions, refreshTokenOptions, sendToken from "../utils/jwt"
 import { redis } from '../utils/redis';
 import { getAllUsersService, getUserById, updateUserRoleService } from '../services/user.service';
 import cloudinary from "cloudinary"
+import { accessTokenOptions, refreshTokenOptions, sendToken } from '../utils/jwt';
 
 interface IRegistrationBody{
     name:string,
@@ -208,7 +209,7 @@ export const updateAccessToken = CatchAsyncError(async(req:Request, res:Response
         const accessToken = jwt.sign(
             {id: user._id}, 
             process.env.ACCESS_TOKEN as string,
-            {expiresIn: '5m'}
+            {expiresIn: '3d'}
         );
 
         const refreshToken = jwt.sign(

@@ -127,13 +127,19 @@ const Header: FC<Props> = ({ open, setOpen, activeItem ,route, setRoute }) => {
               mounted && userData ? (
                 <Link href={"/profile"}>
                   <Image
-                    src={userData?.avatar && userData.avatar.url !== "" ? userData.avatar.url : avatar}
-                  alt="profile"
-                  width={30}
-                  height={30}
-                  className="w-[30px] h-[30px] rounded-full cursor-pointer"
-                  style={{border : activeItem === 5 ? "2px solid #ffff" : "none"}}
-                  />
+  src={
+    user?.avatar?.url 
+    ? user.avatar.url 
+    : userData?.avatar?.url 
+    ? userData.avatar.url 
+    : avatar
+  }
+  alt="profile"
+  width={30}
+  height={30}
+  className="w-[30px] h-[30px] rounded-full cursor-pointer ml-5 my-2"
+  style={{ border: activeItem === 5 ? "2px solid #37a39a" : "none" }}
+/>
                 </Link>
               ) : 
               
@@ -164,11 +170,32 @@ const Header: FC<Props> = ({ open, setOpen, activeItem ,route, setRoute }) => {
                 />
               </Link>
 
-              <NavItems activeItem={activeItem} isMobile={true}/>
-              <HiOutlineUserCircle
-              size={25}
-              className="cursor-pointer ml-5 my-2 text-black dark:text-white" onClick={()=>setOpen(true)}/>
-              <br/>
+             <NavItems activeItem={activeItem} isMobile={true}/>
+{
+  userData ? (
+     <Link href={"/profile"}>
+      <Image
+  src={
+    user?.avatar?.url 
+    ? user.avatar.url 
+    : userData?.avatar?.url 
+    ? userData.avatar.url 
+    : avatar
+  }
+  alt="profile"
+  width={30}
+  height={30}
+  className="w-[30px] h-[30px] rounded-full cursor-pointer ml-5 my-2"
+  style={{ border: activeItem === 5 ? "2px solid #37a39a" : "none" }}
+/>
+     </Link>
+  ) : (
+     <HiOutlineUserCircle
+        size={25}
+        className="cursor-pointer ml-5 my-2 text-black dark:text-white" onClick={()=>setOpen(true)}
+     />
+  )
+} <br/>
               <br/>
               <p className="text-[16px] px-2 pl-5 text-black dark:text-white">Copyright &copy; 2026 Sheep Acadamy</p>
             </div>

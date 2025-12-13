@@ -1,30 +1,42 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { DataGrid, GridColDef, GridToolbar } from '@mui/x-data-grid';
 import { Box } from '@mui/material';
 import { useTheme } from 'next-themes';
 import { AiOutlineMail } from 'react-icons/ai';
-
+import { useGetAllOrdersQuery } from '@/redux/features/orders/ordersApi';
+import { useGetAllCoursesQuery } from '@/redux/features/courses/coursesApi';
+import { useGetUsersAllCoursesQuery } from '@/redux/features/courses/coursesApi';
+import { format } from "timeago.js";
 type Props = {
     isDashboard?: boolean;
 }
 
 const AllInvoices = ({ isDashboard }: Props) => {
     const { theme } = useTheme();
+    const { isLoading, data } = useGetAllOrdersQuery({});
+    const { data: usersData } = useGetUsersAllCoursesQuery({}); // To fetch User data if needed explicitly
+    const { data: coursesData } = useGetAllCoursesQuery({}); // To fetch Course Titles
 
-    const rows = [
-        { id: '1234556776', userName: 'Shahriar Sajeeb', userEmail: 'support@lms.com', title: 'MERN Stack LMS Platform', price: '$20', createdAt: '2 days ago' },
-        { id: '1234556777', userName: 'Sunny Khan', userEmail: 'sunny@gmail.com', title: 'React Native Course', price: '$15', createdAt: '5 days ago' },
-        { id: '1234556778', userName: 'Qazi', userEmail: 'qazi@gmail.com', title: 'Next.js 13 Full Course', price: '$30', createdAt: '1 week ago' },
-        { id: '1234556779', userName: 'Hussain', userEmail: 'hussain@gmail.com', title: 'Python for Beginners', price: '$10', createdAt: '2 weeks ago' },
-        { id: '1234556780', userName: 'John Doe', userEmail: 'johndoe@gmail.com', title: 'Data Science Bootcamp', price: '$50', createdAt: '1 month ago' },
-        { id: '1234556781', userName: 'Alice Smith', userEmail: 'alice@gmail.com', title: 'UI/UX Design Masterclass', price: '$25', createdAt: '1 month ago' },
-        { id: '1234556782', userName: 'Bob Johnson', userEmail: 'bob@gmail.com', title: 'DevOps Essentials', price: '$40', createdAt: '2 months ago' },
-        { id: '1234556783', userName: 'Charlie Brown', userEmail: 'charlie@gmail.com', title: 'Machine Learning A-Z', price: '$60', createdAt: '2 months ago' },
-        { id: '1234556784', userName: 'David Wilson', userEmail: 'david@gmail.com', title: 'Cyber Security Basics', price: '$35', createdAt: '3 months ago' },
-        { id: '1234556785', userName: 'Eva Davis', userEmail: 'eva@gmail.com', title: 'Cloud Computing with AWS', price: '$45', createdAt: '3 months ago' },
-        { id: '1234556786', userName: 'Frank Miller', userEmail: 'frank@gmail.com', title: 'Blockchain Development', price: '$55', createdAt: '4 months ago' },
-        { id: '1234556787', userName: 'Grace Lee', userEmail: 'grace@gmail.com', title: 'Game Development with Unity', price: '$30', createdAt: '4 months ago' },
-    ];
+    const [orderData, setOrderData] = useState<any>([]);
+
+    useEffect(() => {
+        if (data) {
+            const temp = data.orders.map((item: any) => {
+                const user = usersData?.users?.find((user:any) => user._id === item.userId);
+                const course = coursesData?.courses?.find((course:any) => course._id === item.courseId);
+                
+                return {
+                    id: item._id,
+                    userName: user?.name || item.userName || 'User', // Fallback to ID or static
+                    userEmail: user?.email || item.userEmail || 'email@example.com',
+                    title: course?.name || item.title || 'Course Title',
+                    price: "$" + (item.payment_info?.amount) / 100 || "$0", // Adjust based on your payment object
+                    createdAt: format(item.createdAt),
+                };
+            });
+            setOrderData(temp);
+        }
+    }, [data, usersData, coursesData]);
 
     const columns: GridColDef[] = [
         { field: 'id', headerName: 'ID', flex: 0.3 },
@@ -113,12 +125,12 @@ const AllInvoices = ({ isDashboard }: Props) => {
             },
           }}
                 >
-                    <DataGrid
-                        checkboxSelection={isDashboard ? false : true}
-                        rows={rows}
-                        columns={columns}
-                        slots={{ toolbar: isDashboard ? undefined : GridToolbar }}
-                    />
+                   <DataGrid
+                            checkboxSelection={isDashboard ? false : true}
+                            rows={orderData}
+                            columns={columns}
+                            slots={{ toolbar: isDashboard ? undefined : GridToolbar }}
+                        />
                 </Box>
             </Box>
         </div>

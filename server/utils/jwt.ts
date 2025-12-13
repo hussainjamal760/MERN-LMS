@@ -15,14 +15,14 @@ interface ITokenOptions{
    export const accessTokenExpire = parseInt(process.env.ACCESS_TOKEN_EXPIRE || '300', 10);
 export const refreshTokenExpire = parseInt(process.env.REFRESH_TOKEN_EXPIRE || '1200', 10);
 
-  const accessTokenOptions: ITokenOptions = {
-        expires: new Date(Date.now() + accessTokenExpire * 60 * 60 * 1000), // Adjust logic if using '3d' string
+ export const accessTokenOptions: ITokenOptions = {
+        expires: new Date(Date.now() + accessTokenExpire * 60 * 60 * 1000), 
         maxAge: accessTokenExpire * 60 * 60 * 1000,
         httpOnly: true,
         sameSite: 'lax',
     };
 
- const refreshTokenOptions: ITokenOptions = {
+export const refreshTokenOptions: ITokenOptions = {
         expires: new Date(Date.now() + refreshTokenExpire * 24 * 60 * 60 * 1000), // days to ms
         maxAge: refreshTokenExpire * 24 * 60 * 60 * 1000,
         httpOnly: true,
