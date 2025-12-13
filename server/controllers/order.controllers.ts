@@ -81,8 +81,10 @@ export const createOrder = CatchAsyncError(async(req:Request , res:Response , ne
                  user.courses.push({ courseId: course._id.toString() });
                 }
                 
-                await redis.set(req.user?._id , JSON.stringify(user))
-
+             if (req.user?._id) {
+             await redis.set(req.user._id.toString(), JSON.stringify(user));
+        }
+        
             await user?.save()
             const notification = await NotificationModel.create({
                 userId: user?._id,
@@ -104,7 +106,8 @@ export const createOrder = CatchAsyncError(async(req:Request , res:Response , ne
 course.purchased = course.purchased ? course.purchased + 1 : 1;
     
     await course.save();
-        newOrder(data , res , next)
+    await redis.del(courseId);
+    newOrder(data , res , next)
 
     } catch (error:any) {
         return next(new ErrorHandler(error.message,500))

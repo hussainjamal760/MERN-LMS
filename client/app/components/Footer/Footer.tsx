@@ -128,7 +128,7 @@ const Footer = (props: Props) => {
 
       <div className="w-full bg-white dark:bg-slate-900 border-t border-[#0000000e] dark:border-[#ffffff1e] py-6 text-center">
         <p className="text-[14px] font-Poppins">
-          Copyright © 2026 <span className="text-[#37a39a] font-semibold">Sheep Academy</span>. All Rights Reserved. 
+          Copyright © {new Date().getFullYear()} <span className="text-[#37a39a] font-semibold">Sheep Academy</span>. All Rights Reserved. 
           <br className="sm:hidden"/> 
            Built by Hussain Jamal.
         </p>

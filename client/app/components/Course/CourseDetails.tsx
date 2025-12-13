@@ -78,7 +78,7 @@ const CourseDetails = ({ data , clientSecret ,stripePromise}: Props) => {
                 <div className="flex items-center px-4 py-2 rounded-full bg-teal-50 dark:bg-teal-900/10 border border-teal-100 dark:border-teal-900/20 shadow-sm transition-transform hover:scale-105">
                     <IoPeopleOutline size={20} className="text-[#37a39a] mr-2" />
                     <h5 className="text-[#37a39a] font-Poppins font-semibold text-[15px]">
-                        {data?.purchased} Students
+                        {data.purchased} Students
                     </h5>
                 </div>
             </div>
