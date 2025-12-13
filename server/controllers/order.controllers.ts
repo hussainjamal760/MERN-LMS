@@ -47,7 +47,8 @@ export const createOrder = CatchAsyncError(async(req:Request , res:Response , ne
         const data:any={
             courseId:course._id,
             userId:user?._id,
-            payment_info
+            payment_info,
+            price: course.price, 
         }
 
         const mailData = {

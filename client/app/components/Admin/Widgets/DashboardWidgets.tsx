@@ -90,8 +90,10 @@ const DashboardWidgets: FC<Props> = ({ open }) => {
   const userAnalyticsData = userData?.users?.last12Months?.map((item: any) => ({ name: item.month, count: item.count })) || [];
   const ordersAnalyticsData = ordersData?.orders?.last12Months?.map((item: any) => ({ name: item.month, count: item.count })) || [];
   
-  // Static sales calculation logic
-  const totalSales = allOrdersData?.orders?.reduce((acc: number, order: any) => acc + (order.price || 0), 0) || 0;
+const totalSales = allOrdersData?.orders?.reduce((acc: number, order: any) => {
+      const orderPrice = order.price || 0; 
+      return acc + orderPrice;
+  }, 0) || 0;
 
   if (isLoading) return <Loader />;
 
@@ -123,7 +125,6 @@ const DashboardWidgets: FC<Props> = ({ open }) => {
           <div>
             <p className="text-gray-500 dark:text-gray-400">Sales Obtained</p>
             <h2 className="text-2xl font-bold text-black dark:text-white">
-                {/* Agar orders ka price data available nahi hai to placeholder ya count show karein */}
                 {totalSales ? `$${totalSales}` : "0"} 
             </h2>
             <p className={`text-sm ${comparePercentage?.trend === 'negative' ? "text-red-500" : "text-green-500"}`}>
