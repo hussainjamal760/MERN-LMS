@@ -5,6 +5,7 @@ import Heading from '../utils/Heading'
 import Header from '../components/Header'
 import Profile from '../components/Profile/Profile'
 import { useSelector } from 'react-redux'
+import Footer from '../components/Footer/Footer'
 
 type Props = {
 }
@@ -66,6 +67,7 @@ course management system"
       setRoute={setRoute}
       />
       <Profile user={user}/>
+      <Footer/>
         </Protected>
     </>
   )
