@@ -10,6 +10,7 @@ import orderRouter from "./routes/order.route";
 import notificationRouter from "./routes/notification.route";
 import analyticsRouter from "./routes/analytics.route";
 import layoutRouter from "./routes/layout.route";
+import { rateLimit } from 'express-rate-limit'
 
 app.use(express.json({limit:"50mb"}));
 
@@ -18,6 +19,14 @@ app.use(cors({
     credentials: true 
 }));
 app.use(cookieParser())
+
+const limiter = rateLimit({
+    windowMs: 15 * 60 * 1000, 
+    limit: 100, 
+    standardHeaders: 'draft-8', 
+    legacyHeaders: false, 
+    ipv6Subnet: 56, 
+})
 
 app.get("/test" ,(req:Request,res:Response , next:NextFunction)=>{
     res.status(200).json({
@@ -44,5 +53,6 @@ app.use((req: Request, res: Response, next: NextFunction) => {
   next(err);
 });
 
+app.use(limiter)
 
 app.use(ErrorMiddleware)

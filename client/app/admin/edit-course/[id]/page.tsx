@@ -9,7 +9,7 @@ type Props = {
     params: Promise<{ id: string }>
 }
 
-const page = ({params}:any) => {
+const page = ({params}:Props) => {
     const {id} = use(params)
   return (
     <div>

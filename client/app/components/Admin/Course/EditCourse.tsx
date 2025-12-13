@@ -11,7 +11,7 @@ import { useRouter } from "next/navigation"
 import toast from "react-hot-toast"
 
 type Props = {
-    id: String
+    id: string
 }
 
 const EditCourse: FC<Props> = ({id}) => {
