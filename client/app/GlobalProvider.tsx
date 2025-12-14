@@ -26,8 +26,8 @@ export function GlobalProvider({ children }: { children: React.ReactNode }) {
   );
 }
 
+// Separate component to isolate the hook
 const Custom: React.FC<{children: React.ReactNode}> = ({children}) => {
-  const {isLoading} = useLoadUserQuery({});
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
@@ -40,10 +40,19 @@ const Custom: React.FC<{children: React.ReactNode}> = ({children}) => {
     }
   }, [mounted]);
 
+  // If not mounted (Server Side / Build Time), just render children directly.
+  // This prevents the useLoadUserQuery hook from running on the server.
   if (!mounted) {
     return <div className="min-h-screen bg-white dark:bg-black">{children}</div>;
   }
 
+  // Only run the query and show loader on the client side
+  return <UserLoader>{children}</UserLoader>
+}
+
+// Isolate the query in a component that is ONLY rendered when mounted (client-side)
+const UserLoader: React.FC<{children: React.ReactNode}> = ({children}) => {
+  const { isLoading } = useLoadUserQuery({});
   return (
     <div className="min-h-screen bg-white dark:bg-gradient-to-b dark:from-gray-900 dark:to-black duration-300">
       {isLoading ? <Loader/> : <>{children}</>}
