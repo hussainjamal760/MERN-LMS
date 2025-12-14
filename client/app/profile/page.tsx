@@ -13,7 +13,7 @@ type Props = {
 const page:FC<Props> = (props) => {
     const [open, setOpen] = useState(false)
       const [activeItem, setActiveItem] = useState(0)
-      const [route, setRoute] = useState(5)
+      const [route, setRoute] = useState("")
       const {user} = useSelector((state:any)=> state.auth)
     
   return (
