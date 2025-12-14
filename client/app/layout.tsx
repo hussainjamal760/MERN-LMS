@@ -1,6 +1,8 @@
+// client/app/layout.tsx
 import './globals.css';
 import { Poppins, Josefin_Sans } from "next/font/google";
 import { GlobalProvider } from "./GlobalProvider"; 
+import type { Metadata } from 'next';
 
 const poppins = Poppins({
   subsets: ["latin"],
@@ -14,9 +16,11 @@ const josefin = Josefin_Sans({
   variable: "--font-Josefin",
 });
 
-export const metadata = {
+export const metadata: Metadata = {
   title: "Sheep Academy",
-  description: "LMS Platform",
+  description: "LMS Platform - Learn Anything, Anytime",
+  keywords: "online learning, LMS, courses, education",
+  viewport: "width=device-width, initial-scale=1.0",
 };
 
 export default function RootLayout({

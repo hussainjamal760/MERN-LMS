@@ -1,17 +1,36 @@
-import { redirect } from 'next/navigation'
-import React from 'react'
-import { useSelector } from 'react-redux'
+// client/app/hooks/adminProtected.tsx
+'use client'
 
-type protectedProps = {
+import { redirect } from 'next/navigation'
+import React, { useEffect, useState } from 'react'
+import { useSelector } from 'react-redux'
+import Loader from '../components/Loader/Loader'
+
+type ProtectedProps = {
     children: React.ReactNode
 }
 
-const adminProtected = ({children}:protectedProps) => {
-  const {user} = useSelector((state:any) => state.auth)
-  if(user){
-    const isAdmin = user?.role === "admin";
-    return isAdmin ? children : redirect("/")
+const AdminProtected = ({children}: ProtectedProps) => {
+  const { user } = useSelector((state: any) => state.auth)
+  const [isChecking, setIsChecking] = useState(true)
+
+  useEffect(() => {
+    setIsChecking(false)
+    
+    if (!user || user.role !== "admin") {
+      redirect("/")
+    }
+  }, [user])
+
+  if (isChecking) {
+    return <Loader />
   }
+
+  if (!user || user.role !== "admin") {
+    return null
+  }
+
+  return <>{children}</>
 }
 
-export default adminProtected
+export default AdminProtected

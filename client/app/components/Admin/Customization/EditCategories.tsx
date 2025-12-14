@@ -1,3 +1,4 @@
+'use client'
 import { useEditLayoutMutation, useGetHeroDataQuery } from "@/redux/features/layout/layoutApi";
 import React, { useEffect, useState } from "react";
 import { toast } from "react-hot-toast";

@@ -1,21 +1,38 @@
+// client/app/utils/Heading.tsx
 'use client'
-import React,{FC} from "react";
 
-interface HeadProps{
-    title:string,
-    description:string,
-    keywords:string,
+import React, { FC, useEffect } from "react";
+
+interface HeadProps {
+    title: string;
+    description: string;
+    keywords: string;
 }
 
-const Heading: FC<HeadProps> =({title,description,keywords})=>{
-    return(
-        <>
-        <title>{title}</title>
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <meta name="description" content={description} />
-        <meta name="keywords" content={keywords} />
-        </>
-    )
+const Heading: FC<HeadProps> = ({ title, description, keywords }) => {
+    useEffect(() => {
+        // Update document title
+        document.title = title;
+        
+        // Update meta tags
+        let metaDescription = document.querySelector('meta[name="description"]');
+        if (!metaDescription) {
+            metaDescription = document.createElement('meta');
+            metaDescription.setAttribute('name', 'description');
+            document.head.appendChild(metaDescription);
+        }
+        metaDescription.setAttribute('content', description);
+        
+        let metaKeywords = document.querySelector('meta[name="keywords"]');
+        if (!metaKeywords) {
+            metaKeywords = document.createElement('meta');
+            metaKeywords.setAttribute('name', 'keywords');
+            document.head.appendChild(metaKeywords);
+        }
+        metaKeywords.setAttribute('content', keywords);
+    }, [title, description, keywords]);
+
+    return null;
 }
 
 export default Heading;
