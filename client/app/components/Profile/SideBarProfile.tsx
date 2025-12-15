@@ -1,7 +1,7 @@
 'use client'
 import Image from 'next/image';
 import React, { FC } from 'react'
-import avatarDefault from "../../../public/avatar.png"
+import avatarDefault from "../../../public/user1.jpg"
 import { RiLockPasswordLine } from "react-icons/ri"
 import { MdOutlineAdminPanelSettings } from "react-icons/md"
 import { SiCoursera } from "react-icons/si"
