@@ -1,7 +1,7 @@
 # 📚 MERN Stack Learning Management System (LMS)
 # Sheep Academy
 
-[![Live Demo](https://sheep-academy-v1.onrender.com/)
+[![Live Demo](https://img.shields.io/badge/demo-online-green.svg)]([https://your-live-demo-link.com](https://sheep-academy-v1.onrender.com/))
 
 A comprehensive and scalable **Learning Management System** built with the **MERN stack** (MongoDB, Express.js, React/Next.js, Node.js). This platform offers a robust environment for instructors to publish courses and for students to purchase and consume content seamlessly.
 
