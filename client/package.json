@@ -2,12 +2,11 @@
   "name": "client",
   "version": "0.1.0",
   "private": true,
-  "scripts": {
-    "dev": "next dev",
-    "build": "next build",
-    "start": "next start",
-    "lint": "eslint"
-  },
+"scripts": {
+  "dev": "ts-node-dev --respawn --transpile-only server.ts",
+  "build": "tsc",
+  "start": "node dist/server.js"
+},
   "dependencies": {
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.1",
