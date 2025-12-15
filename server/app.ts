@@ -15,7 +15,7 @@ import { rateLimit } from 'express-rate-limit'
 app.use(express.json({limit:"50mb"}));
 
 app.use(cors({
-    origin: process.env.ORIGIN || 'http://localhost:3000',
+    origin: process.env.ORIGIN || 'https://sheep-academy-v1.onrender.com',
     credentials: true 
 }));
 app.use(cookieParser())
