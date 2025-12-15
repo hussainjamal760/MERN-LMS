@@ -6,7 +6,7 @@
 A comprehensive and scalable **Learning Management System** built with the **MERN stack** (MongoDB, Express.js, React/Next.js, Node.js). This platform offers a robust environment for instructors to publish courses and for students to purchase and consume content seamlessly.
 
 ## 🔗 Live Demo
-Check out the live application here: **[MERN LMS Live Demo](https://your-live-demo-link.com)**
+Check out the live application here: **[Sheep Academy Live Demo]([https://your-live-demo-link.co](https://sheep-academy-v1.onrender.com/))**
 ## 🚀 Key Features
 
 * **Modern Frontend:** Built with **Next.js 16 (App Router)** and **React 19** for server-side rendering and high performance.
