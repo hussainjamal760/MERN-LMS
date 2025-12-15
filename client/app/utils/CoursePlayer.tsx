@@ -18,7 +18,7 @@ const CoursePlayer: FC<Props> = ({ videoUrl, title }) => {
         
         const fetchVideoData = async () => {
             try {
-                const response = await axios.post(`http://localhost:8000/api/v1/getVdoCipherOTP`, {
+                const response = await axios.post(`${process.env.NEXT_PUBLIC_SERVER_URI}getVdoCipherOTP`, {
                     videoId: videoUrl
                 });
                 setVideoData(response.data);
