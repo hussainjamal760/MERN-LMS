@@ -1,7 +1,6 @@
 'use client'
 import Image from 'next/image';
 import React, { FC } from 'react'
-import avatarDefault from "../../../public/user1.jpg"
 import { RiLockPasswordLine } from "react-icons/ri"
 import { MdOutlineAdminPanelSettings } from "react-icons/md"
 import { SiCoursera } from "react-icons/si"
@@ -30,12 +29,17 @@ const SideBarProfile: FC<Props> = ({ user, active, avatar, setActive, logoutHand
                 onClick={() => setActive(1)}
             >
                 <Image 
-                    src={user.avatar || avatar ? user.avatar.url || avatar : avatarDefault} 
-                    alt='avatar' 
-                    width={40} 
-                    height={40}
-                    className="rounded-full object-cover mr-4 border-2 border-transparent"
-                />
+  src={
+    user?.avatar?.url ||
+    avatar ||
+    "/avatar.png"
+  }
+  alt="avatar"
+  width={40}
+  height={40}
+  className="rounded-full object-cover mr-4 border-2 border-transparent"
+/>
+
                 <h5 className={`${active === 1 ? "text-white font-semibold" : "text-gray-700 dark:text-gray-200"}`}>
                     My Account
                 </h5>
