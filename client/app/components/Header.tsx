@@ -10,7 +10,6 @@ import Login from "./Auth/Login"
 import Signup from "./Auth/Signup"
 import Verification from "./Auth/Verification"
 import { useSelector } from "react-redux";
-import avatar from "../../public/user1.jpg"
 import { useSession } from "next-auth/react";
 import { useLogOutQuery, useSocialAuthMutation } from "@/redux/auth/authapi";
 import toast from "react-hot-toast";
@@ -128,11 +127,9 @@ const Header: FC<Props> = ({ open, setOpen, activeItem ,route, setRoute }) => {
                 <Link href={"/profile"}>
                   <Image
   src={
-    user?.avatar?.url 
-    ? user.avatar.url 
-    : userData?.avatar?.url 
-    ? userData.avatar.url 
-    : avatar
+    user?.avatar?.url ||
+    userData?.avatar?.url ||
+    "/avatar.png"
   }
   alt="profile"
   width={30}
@@ -175,12 +172,10 @@ const Header: FC<Props> = ({ open, setOpen, activeItem ,route, setRoute }) => {
   userData ? (
      <Link href={"/profile"}>
       <Image
-  src={
-    user?.avatar?.url 
-    ? user.avatar.url 
-    : userData?.avatar?.url 
-    ? userData.avatar.url 
-    : avatar
+   src={
+    user?.avatar?.url ||
+    userData?.avatar?.url ||
+    "/avatar.png"
   }
   alt="profile"
   width={30}
