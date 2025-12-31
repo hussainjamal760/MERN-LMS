@@ -40,7 +40,10 @@ export const registrationUser = CatchAsyncError(async(req:Request , res:Response
 
         const data = {user: {name : user.name} , activationCode};
 
-const html = await ejs.renderFile(path.join(process.cwd(), "server/mails/activation-mail.ejs"), data)
+const html = await ejs.renderFile(
+  path.join(process.cwd(), "mails", "activation-mail.ejs"),
+  data
+);
 
         try {
             await sendMail({
