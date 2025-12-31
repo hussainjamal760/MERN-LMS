@@ -1,41 +1,40 @@
-import nodemailer , {Transporter} from 'nodemailer'
+import sgMail from '@sendgrid/mail';
 import path from 'path';
-import ejs from "ejs"
+import ejs from "ejs";
 require('dotenv').config();
 
-interface EmailOptions{
-    email:string;
-    subject:string;
-    template:string;
-    data:{[key:string] : any}
+sgMail.setApiKey(process.env.SENDGRID_API_KEY || '');
+
+interface EmailOptions {
+    email: string;
+    subject: string;
+    template: string;
+    data: { [key: string]: any };
 }
 
-const sendMail = async(options : EmailOptions):Promise <void> =>{
-    const transporter:Transporter = nodemailer.createTransport({
-        host: process.env.SMTP_HOST,
-        port: parseInt(process.env.SMTP_PORT || '465'),
-        secure:true,
-        logger: true,
-        debug: true,
-        auth: {user: process.env.SMTP_USER, 
-               pass : process.env.SMTP_PASSWORD
-        },
-    })   
-    
-    const {email , subject , template , data } = options;
+const sendMail = async (options: EmailOptions): Promise<void> => {
+    const { email, subject, template, data } = options;
 
-    const templatePath = path.join(__dirname , '../mails',template);
+    // Template path setup
+    const templatePath = path.join(__dirname, '../mails', template);
 
-    const html:string = await ejs.renderFile(templatePath ,data);
+    // EJS file render karein
+    const html: string = await ejs.renderFile(templatePath, data);
 
-    const mailOptions = {
-        from: process.env.SMTP_MAIL,
+    const msg = {
         to: email,
+        from: process.env.SENDGRID_MAIL as string, // Verified Sender Email
         subject,
-        html
-    }
+        html,
+    };
 
-    await transporter.sendMail(mailOptions)
-}
+    try {
+        await sgMail.send(msg);
+        console.log("Email sent successfully via SendGrid");
+    } catch (error: any) {
+        console.error("SendGrid Error:", error.response?.body || error.message);
+        throw new Error(error.message);
+    }
+};
 
 export default sendMail;
