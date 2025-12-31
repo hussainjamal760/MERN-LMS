@@ -30,40 +30,17 @@ export const registrationUser = CatchAsyncError(async(req:Request , res:Response
             return next(new ErrorHandler("Email Already Exists", 400))
         }
 
-        const user:IRegistrationBody = {
-            name , email , password,
-        };
+        const user = await userModel.create({
+            name,
+            email,
+            password,
+        });
 
-        const activationToken = createActivationToken(user)
-
-        const activationCode = activationToken.activationCode;
-
-        const data = {user: {name : user.name} , activationCode};
-
-const html = await ejs.renderFile(
-  path.join(__dirname, "../mails/activation-mail.ejs"),
-  data
-);
-
-
-        try {
-            await sendMail({
-                email:user.email,
-                subject:"Activate your account",
-                template:'activation-mail.ejs',
-                data,
-            })
-
-            res.status(201).json({
+       res.status(201).json({
             success: true,
-            message: `Please check your mail ${user.email} to activate your account`,
-            activationToken: activationToken.token,
-})
-
-            
-        } catch (error:any) {
-            return next(new ErrorHandler(error.message ,400))
-        }
+            message: "User registered successfully",
+            user, 
+        });
 
     } catch (error:any) {
         return next(new ErrorHandler(error.message,400))

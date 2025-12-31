@@ -14,6 +14,7 @@ require("dotenv").config();
 const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY)
 import { io } from "../socketServer"; 
 
+
 export const createOrder = CatchAsyncError(async(req:Request , res:Response , next:NextFunction)=>{
     try {
         const {courseId , payment_info} = req.body as IOrder
@@ -35,7 +36,7 @@ export const createOrder = CatchAsyncError(async(req:Request , res:Response , ne
         const courseExistsInUser = user?.courses.some((course:any)=>course._id.toString() === courseId.toString())
         
         if(courseExistsInUser){
-        return next(new ErrorHandler("You have already purchased this course",404))
+            return next(new ErrorHandler("You have already purchased this course",404))
         }
 
         const course:ICourse | null = await CourseModel.findById(courseId)
@@ -51,64 +52,37 @@ export const createOrder = CatchAsyncError(async(req:Request , res:Response , ne
             price: course.price, 
         }
 
-        const mailData = {
-            order:{
-                _id:(course._id as string).toString().slice(0,6),
-                name:course.name,
-                price:course.price,
-                date:new Date().toLocaleDateString('en-US' , {year:'numeric',month:'long',day:'numeric'})
 
-            },
-            url: process.env.ORIGIN
+        if (user && course?._id) {
+             user.courses.push({ courseId: course._id.toString() });
         }
-
-        const html = await ejs.renderFile(path.join(__dirname , '../mails/order-confirmation.ejs'),mailData)
-
-        try {
-            if(user){
-                await sendMail({
-                    email:user.email,
-                    subject:"Order Confirmation",
-                    template:"order-confirmation.ejs",
-                    data:mailData
-                })
-            }
-            
-        } catch (error:any) {
-        return next(new ErrorHandler(error.message,500))
-        }
-
-            if (user && course?._id) {
-                 user.courses.push({ courseId: course._id.toString() });
-                }
                 
-             if (req.user?._id) {
+        if (req.user?._id) {
              await redis.set(req.user._id.toString(), JSON.stringify(user));
         }
         
-            await user?.save()
-            const notification = await NotificationModel.create({
-                userId: user?._id,
-                title: "New Order",
-                message: `You have a new order from ${course?.name}`,
+        await user?.save()
+        
+        const notification = await NotificationModel.create({
+            userId: user?._id,
+            title: "New Order",
+            message: `You have a new order from ${course?.name}`,
+        });
+
+        if (io) {
+            io.emit("newNotification", {
+                _id: notification._id,
+                title: notification.title,
+                message: notification.message,
+                status: notification.status,
             });
-
-         if (io) {
-    io.emit("newNotification", {
-        _id: notification._id,
-        title: notification.title,
-        message: notification.message,
-        status: notification.status,
-    });
-}
+        }
             
-
-
-course.purchased = course.purchased ? course.purchased + 1 : 1;
+        course.purchased = course.purchased ? course.purchased + 1 : 1;
     
-    await course.save();
-    await redis.del(courseId);
-    newOrder(data , res , next)
+        await course.save();
+        await redis.del(courseId);
+        newOrder(data , res , next)
 
     } catch (error:any) {
         return next(new ErrorHandler(error.message,500))
