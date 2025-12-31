@@ -12,7 +12,7 @@ type Props = {
 }
 
 const ProfileInfo: FC<Props> = ({ avatar, user }) => {
-    const currentAvatarUrl = user?.avatar?.url || avatar || "/default-avatar.png";
+    const currentAvatarUrl = user?.avatar?.url || avatar || "/avatar.png";
     const [updateAvatar , {isSuccess ,error}] = useUpdateAvatarMutation()
     const [editProfile , {isSuccess:success ,error:updateError}] = useEditProfileMutation()
     const [name, setName] = useState(user?.name || "");

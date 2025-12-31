@@ -85,7 +85,7 @@ const CoursesPageContent = () => {
                     placeholder="Search for a course..."
                     value={search}
                     onChange={(e) => setSearch(e.target.value)}
-                    className="bg-transparent w-full outline-none text-[#000000e6] dark:text-[#ffffffe6] px-4 font-Poppins"
+                    className="bg-transparent w-full outline-none text-[#ffffffe6] px-4 font-Poppins"
                   />
                   <div className="bg-[#39c1f3] rounded-full p-2 cursor-pointer hover:bg-[#2190ff] transition-all">
                      <BiSearch className="text-white" size={20} />
@@ -98,7 +98,7 @@ const CoursesPageContent = () => {
                   className={`px-6 py-2 rounded-full cursor-pointer transition-all duration-300 backdrop-blur-md border shadow-sm
                     ${category === "All"
                       ? "bg-[#37a39a] border-transparent text-white" 
-                      : "bg-[#05242f] bg-opacity-10 dark:bg-opacity-20 border-[#00000015] dark:border-[#ffffff1d] text-black dark:text-white hover:bg-[#37a39a] hover:text-white hover:border-transparent"
+                      : "bg-[#05242f] bg-opacity-10 dark:bg-opacity-20 border-[#00000015] dark:border-[#ffffff1d] text-[#ffffffe6] hover:bg-[#37a39a] hover:text-white hover:border-transparent"
                     }`}
                   onClick={() => setCategory("All")}
                 >
@@ -111,7 +111,7 @@ const CoursesPageContent = () => {
                       className={`px-6 py-2 rounded-full cursor-pointer transition-all duration-300 backdrop-blur-md border shadow-sm
                         ${category === item.title
                           ? "bg-[#37a39a] border-transparent text-white" 
-                          : "bg-[#05242f] bg-opacity-10 dark:bg-opacity-20 border-[#00000015] dark:border-[#ffffff1d] text-black dark:text-white hover:bg-[#37a39a] hover:text-white hover:border-transparent"
+                          : "bg-[#05242f] bg-opacity-10 dark:bg-opacity-20 border-[#00000015] dark:border-[#ffffff1d] text-[#ffffffe6] hover:bg-[#37a39a] hover:text-white hover:border-transparent"
                         }`}
                       onClick={() => setCategory(item.title)}
                     >
