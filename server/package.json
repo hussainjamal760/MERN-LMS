@@ -3,9 +3,9 @@
   "version": "1.0.0",
   "type": "commonjs",
   "main": "dist/server.js",
-  "scripts": {
+"scripts": {
   "dev": "ts-node-dev --respawn --transpile-only server.ts",
-  "build": "tsc && cp -r server/mails dist/mails",
+  "build": "tsc && cp -r mails dist/mails",
   "start": "node dist/server.js"
 },
   "dependencies": {
