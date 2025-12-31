@@ -4,10 +4,10 @@
   "type": "commonjs",
   "main": "dist/server.js",
   "scripts": {
-    "dev": "ts-node-dev --respawn --transpile-only server.ts",
-    "build": "tsc",
-    "start": "node dist/server.js"
-  },
+  "dev": "ts-node-dev --respawn --transpile-only server.ts",
+  "build": "tsc && cp -r server/mails dist/mails",
+  "start": "node dist/server.js"
+},
   "dependencies": {
     "@types/bcryptjs": "^2.4.6",
     "@types/cookie-parser": "^1.4.10",
