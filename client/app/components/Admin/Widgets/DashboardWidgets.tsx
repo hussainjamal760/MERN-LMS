@@ -33,10 +33,7 @@ const CircularProgressWithLabel: FC<any> = ({ open, value }) => {
       />
       <Box
         sx={{
-          top: 0,
-          left: 0,
-          bottom: 0,
-          right: 0,
+          top: 0, left: 0, bottom: 0, right: 0,
           position: "absolute",
           display: "flex",
           alignItems: "center",
@@ -57,9 +54,8 @@ const DashboardWidgets: FC<Props> = ({ open }) => {
   const [usersComparePercentage, setUsersComparePercentage] = useState<any>();
 
   useEffect(() => {
-    if (isLoading) return;
+    if (userLoading || ordersLoading || allOrdersLoading) return;
     
-    // Calculate Order/Sales Growth
     const lastTwoMonthsOrders = ordersData?.orders?.last12Months?.slice(-2);
     if (lastTwoMonthsOrders && lastTwoMonthsOrders.length === 2) {
        const currentMonth = lastTwoMonthsOrders[1].count;
@@ -71,7 +67,6 @@ const DashboardWidgets: FC<Props> = ({ open }) => {
        });
     }
 
-    // Calculate User Growth
     const lastTwoMonthsUsers = userData?.users?.last12Months?.slice(-2);
     if (lastTwoMonthsUsers && lastTwoMonthsUsers.length === 2) {
        const currentMonth = lastTwoMonthsUsers[1].count;
@@ -82,15 +77,14 @@ const DashboardWidgets: FC<Props> = ({ open }) => {
            trend: currentMonth >= previousMonth ? 'positive' : 'negative'
        });
     }
-
-  }, [ordersData, userData, allOrdersLoading]);
+  }, [ordersData, userData, allOrdersLoading, userLoading, ordersLoading]);
 
   const isLoading = userLoading || ordersLoading || allOrdersLoading;
 
   const userAnalyticsData = userData?.users?.last12Months?.map((item: any) => ({ name: item.month, count: item.count })) || [];
   const ordersAnalyticsData = ordersData?.orders?.last12Months?.map((item: any) => ({ name: item.month, count: item.count })) || [];
   
-const totalSales = allOrdersData?.orders?.reduce((acc: number, order: any) => {
+  const totalSales = allOrdersData?.orders?.reduce((acc: number, order: any) => {
       const orderPrice = order.price || 0; 
       return acc + orderPrice;
   }, 0) || 0;
@@ -108,19 +102,23 @@ const totalSales = allOrdersData?.orders?.reduce((acc: number, order: any) => {
         <div className="w-full h-[200px]">
           <ResponsiveContainer width="100%" height="80%">
             <AreaChart data={userAnalyticsData}>
+              <defs>
+                <linearGradient id="colorUsersWidget" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="5%" stopColor="#4d62d9" stopOpacity={0.8}/>
+                  <stop offset="95%" stopColor="#4d62d9" stopOpacity={0}/>
+                </linearGradient>
+              </defs>
               <XAxis dataKey="name" stroke={theme === 'dark' ? "#fff" : "#000"} />
               <YAxis stroke={theme === 'dark' ? "#fff" : "#000"} />
-              <Tooltip />
-              <Area type="monotone" dataKey="count" stroke="#4d62d9" fill="#4d62d9" />
+              <Tooltip contentStyle={{ backgroundColor: '#333', border: 'none', borderRadius: '5px' }} itemStyle={{ color: '#fff' }} />
+              <Area type="monotone" dataKey="count" stroke="#4d62d9" fill="url(#colorUsersWidget)" strokeWidth={2} />
             </AreaChart>
           </ResponsiveContainer>
         </div>
       </div>
 
-      {/* Key Metrics Widgets */}
+      {/* Widgets (Sales & Users) */}
       <div className="col-span-12 md:col-span-4 flex flex-col justify-between gap-4">
-        
-        {/* Sales Widget */}
         <div className="bg-white dark:bg-[#111C43] rounded-xl p-5 shadow-sm flex-1 flex justify-between items-center min-h-[120px]">
           <div>
             <p className="text-gray-500 dark:text-gray-400">Sales Obtained</p>
@@ -134,7 +132,6 @@ const totalSales = allOrdersData?.orders?.reduce((acc: number, order: any) => {
           <CircularProgressWithLabel value={comparePercentage?.percentChange > 100 ? 100 : comparePercentage?.percentChange} open={open} />
         </div>
 
-        {/* New Users Widget */}
         <div className="bg-white dark:bg-[#111C43] rounded-xl p-5 shadow-sm flex-1 flex justify-between items-center min-h-[140px]">
           <div>
             <p className="text-gray-500 dark:text-gray-400">New Users</p>
@@ -158,8 +155,8 @@ const totalSales = allOrdersData?.orders?.reduce((acc: number, order: any) => {
               <CartesianGrid strokeDasharray="3 3" strokeOpacity={0.1} />
               <XAxis dataKey="name" stroke={theme === 'dark' ? "#fff" : "#000"} />
               <YAxis stroke={theme === 'dark' ? "#fff" : "#000"} />
-              <Tooltip />
-              <Line type="monotone" dataKey="count" stroke="#82ca9d" strokeWidth={2} />
+              <Tooltip contentStyle={{ backgroundColor: '#333', border: 'none', borderRadius: '5px' }} itemStyle={{ color: '#fff' }} />
+              <Line type="monotone" dataKey="count" stroke="#82ca9d" strokeWidth={3} dot={{r:4}} />
             </LineChart>
           </ResponsiveContainer>
         </div>
