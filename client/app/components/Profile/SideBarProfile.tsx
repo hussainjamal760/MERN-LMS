@@ -22,67 +22,55 @@ const SideBarProfile: FC<Props> = ({ user, active, avatar, setActive, logoutHand
     
 
     return (
-        <div className="w-[280px] p-4 bg-white dark:bg-gray-800 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700">
+    
+        <div className="w-full p-4 bg-white dark:bg-gray-800/50 backdrop-blur-md rounded-xl shadow-sm border border-gray-100 dark:border-gray-700/50">
             
             <div 
-                className={`${menuItemClasses} ${active === 1 ? "bg-blue-500 hover:bg-blue-600 dark:bg-blue-700 dark:hover:bg-blue-600" : ""}`} 
+                className={`${menuItemClasses} ${active === 1 ? "bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 font-semibold" : "text-gray-600 dark:text-gray-300"}`} 
                 onClick={() => setActive(1)}
             >
                 <Image 
-  src={
-    user?.avatar?.url ||
-    avatar ||
-    "/avatar.png"
-  }
-  alt="avatar"
-  width={40}
-  height={40}
-  className="rounded-full object-cover mr-4 border-2 border-transparent"
-/>
-
-                <h5 className={`${active === 1 ? "text-white font-semibold" : "text-gray-700 dark:text-gray-200"}`}>
-                    My Account
-                </h5>
+                    src={user?.avatar?.url || avatar || "/avatar.png"}
+                    alt="avatar"
+                    width={40}
+                    height={40}
+                    className={`rounded-full object-cover mr-4 border-2 ${active === 1 ? "border-blue-500" : "border-transparent"} transition-all`}
+                />
+                <h5 className="text-[16px]">My Account</h5>
             </div>
 
             <div 
-                className={`${menuItemClasses} ${active === 2 ? "bg-gray-100 dark:bg-slate-700 font-medium" : ""}`} 
+                className={`${menuItemClasses} ${active === 2 ? "bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 font-semibold" : "text-gray-600 dark:text-gray-300"}`} 
                 onClick={() => setActive(2)}
             >
-                <RiLockPasswordLine size={24} className={`mr-4 ${active === 2 ? "text-blue-500 dark:text-blue-400" : "text-gray-500 dark:text-gray-400"}`} />
-                <h5 className={`${active === 2 ? "text-blue-500 dark:text-blue-400" : "text-gray-700 dark:text-gray-200"}`}>
-                    Change Password
-                </h5>
+                <RiLockPasswordLine size={22} className="mr-4" />
+                <h5 className="text-[16px]">Change Password</h5>
             </div>
 
             <div 
-                className={`${menuItemClasses} ${active === 3 ? "bg-gray-100 dark:bg-slate-700 font-medium" : ""}`} 
+                className={`${menuItemClasses} ${active === 3 ? "bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 font-semibold" : "text-gray-600 dark:text-gray-300"}`} 
                 onClick={() => setActive(3)}
             >
-                <SiCoursera size={24} className={`mr-4 ${active === 3 ? "text-blue-500 dark:text-blue-400" : "text-gray-500 dark:text-gray-400"}`} />
-                <h5 className={`${active === 3 ? "text-blue-500 dark:text-blue-400" : "text-gray-700 dark:text-gray-200"}`}>
-                    Enrolled Courses
-                </h5>
+                <SiCoursera size={22} className="mr-4" />
+                <h5 className="text-[16px]">Enrolled Courses</h5>
             </div>
 
-              {user.role === "admin" && <Link 
-              href={"/admin"}
-                className={`${menuItemClasses} ${active === 6 ? "bg-gray-100 dark:bg-slate-700 font-medium" : ""}`} 
-            >
-                <MdOutlineAdminPanelSettings size={24} className={`mr-4 ${active === 6 ? "text-blue-500 dark:text-blue-400" : "text-gray-500 dark:text-gray-400"}`} />
-                <h5 className={`${active === 6 ? "text-blue-500 dark:text-blue-400" : "text-gray-700 dark:text-gray-200"}`}>
-                    Admin Dashboard
-                </h5>
-            </Link>}
+              {user.role === "admin" && (
+                <Link 
+                    href={"/admin"}
+                    className={`${menuItemClasses} ${active === 6 ? "bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 font-semibold" : "text-gray-600 dark:text-gray-300"}`} 
+                >
+                    <MdOutlineAdminPanelSettings size={22} className="mr-4" />
+                    <h5 className="text-[16px]">Admin Dashboard</h5>
+                </Link>
+              )}
 
             <div 
-                className={`${menuItemClasses} mt-8 border-t pt-4 border-gray-200 dark:border-gray-700 !mb-0 text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20`} 
+                className={`${menuItemClasses} mt-4 !mb-0 text-red-500 hover:bg-red-50 dark:hover:bg-red-900/10 border-t border-gray-100 dark:border-gray-700 pt-4 rounded-none`} 
                 onClick={() => logoutHandler()}
             >
-                <AiOutlineLogout size={24} className="mr-4 text-red-500" />
-                <h5 className="font-medium text-red-500">
-                    Log Out
-                </h5>
+                <AiOutlineLogout size={22} className="mr-4" />
+                <h5 className="text-[16px] font-medium">Log Out</h5>
             </div>
 
         </div>
