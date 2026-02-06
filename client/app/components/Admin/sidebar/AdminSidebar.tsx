@@ -17,13 +17,12 @@ import {
 
 type Props = {}
 
-const AdminSidebar = (props: Props) => {
+const AdminSidebar = ({ isCollapsed, setIsCollapsed }: { isCollapsed: boolean, setIsCollapsed: (value: boolean) => void }) => {
     const { user } = useSelector((state: any) => state.auth)
-    const [isCollapsed, setIsCollapsed] = useState(false)
 
     const activeColor = "bg-gradient-to-r from-[#37a39a] to-[#55c8bf] shadow-lg shadow-[#37a39a]/30"
     const glassHover = "hover:bg-gray-100 dark:hover:bg-white/5"
-const [mounted, setMounted] = useState(false) 
+    const [mounted, setMounted] = useState(false) 
 
     useEffect(() => {
         setMounted(true)
@@ -34,9 +33,9 @@ const [mounted, setMounted] = useState(false)
                 fixed top-0 left-0 z-[9999] h-screen
                 bg-white dark:bg-[#111C43] 
                 border-r border-gray-200 dark:border-gray-800 
-                transition-all duration-500 ease-in-out
+                transition-all duration-300 ease-in-out
                 flex flex-col justify-between
-                ${isCollapsed ? 'w-[80px]' : 'w-[290px]'}
+                ${isCollapsed ? 'w-[80px]' : 'w-[260px]'}
             `}
         >
             <div>

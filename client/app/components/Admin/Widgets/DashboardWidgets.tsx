@@ -10,6 +10,7 @@ import { useGetAllOrdersQuery } from "@/redux/features/orders/ordersApi";
 import Loader from "../../Loader/Loader";
 import {
   AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer,
+  BarChart, Bar,
   LineChart, CartesianGrid, Line,
 } from "recharts";
 import AllInvoices from "../Order/AllInvoices";
@@ -92,80 +93,101 @@ const DashboardWidgets: FC<Props> = ({ open }) => {
   if (isLoading) return <Loader />;
 
   return (
-    <div className="w-full h-[90vh] overflow-y-auto p-4 grid grid-cols-12 gap-4 custom-scrollbar">
+    <div className="w-full h-[90vh] overflow-y-auto p-4 grid grid-cols-12 gap-6 custom-scrollbar">
 
       {/* User Analytics Chart */}
-      <div className="col-span-12 md:col-span-8 bg-white dark:bg-[#111C43] rounded-xl p-4 shadow-sm min-h-[300px]">
-        <div className="flex items-center justify-between mb-4">
-           <h2 className="text-black dark:text-white text-[18px] font-medium">Users Analytics</h2>
+      <div className="col-span-12 lg:col-span-8 bg-white dark:bg-[#111C43] rounded-2xl p-6 shadow-sm border border-gray-100 dark:border-gray-800 min-h-[350px]">
+        <div className="flex items-center justify-between mb-6">
+           <h2 className="text-gray-800 dark:text-white text-xl font-semibold">User Analytics</h2>
         </div>
-        <div className="w-full h-[200px]">
-          <ResponsiveContainer width="100%" height="80%">
-            <AreaChart data={userAnalyticsData}>
-              <defs>
-                <linearGradient id="colorUsersWidget" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="#4d62d9" stopOpacity={0.8}/>
-                  <stop offset="95%" stopColor="#4d62d9" stopOpacity={0}/>
-                </linearGradient>
-              </defs>
-              <XAxis dataKey="name" stroke={theme === 'dark' ? "#fff" : "#000"} />
-              <YAxis stroke={theme === 'dark' ? "#fff" : "#000"} />
-              <Tooltip contentStyle={{ backgroundColor: '#333', border: 'none', borderRadius: '5px' }} itemStyle={{ color: '#fff' }} />
-              <Area type="monotone" dataKey="count" stroke="#4d62d9" fill="url(#colorUsersWidget)" strokeWidth={2} />
-            </AreaChart>
+        <div className="w-full h-[250px]">
+          <ResponsiveContainer width="100%" height="100%">
+            <BarChart data={userAnalyticsData} margin={{ top: 20, right: 30, left: 0, bottom: 0 }}>
+              <XAxis dataKey="name" stroke="#9ca3af" fontSize={12} tickLine={false} axisLine={false} />
+              <YAxis stroke="#9ca3af" fontSize={12} tickLine={false} axisLine={false} tickFormatter={(value) => `${value}`} />
+              <Tooltip 
+                contentStyle={{ 
+                    backgroundColor: theme === 'dark' ? '#1f2937' : '#fff', 
+                    borderRadius: '8px', 
+                    boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)', 
+                    border: 'none',
+                    color: theme === 'dark' ? '#fff' : '#000'
+                }} 
+                cursor={{fill: theme === 'dark' ? '#374151' : '#f3f4f6'}}
+              />
+              <CartesianGrid vertical={false} strokeDasharray="3 3" stroke="#e5e7eb" opacity={0.3} />
+              <Bar dataKey="count" fill="#4d62d9" radius={[4, 4, 0, 0]} barSize={30} />
+            </BarChart>
           </ResponsiveContainer>
         </div>
       </div>
 
       {/* Widgets (Sales & Users) */}
-      <div className="col-span-12 md:col-span-4 flex flex-col justify-between gap-4">
-        <div className="bg-white dark:bg-[#111C43] rounded-xl p-5 shadow-sm flex-1 flex justify-between items-center min-h-[120px]">
+      <div className="col-span-12 lg:col-span-4 flex flex-col gap-6">
+        <div className="bg-white dark:bg-[#111C43] rounded-2xl p-6 shadow-sm border border-gray-100 dark:border-gray-800 flex justify-between items-center transition-transform hover:scale-[1.02]">
           <div>
-            <p className="text-gray-500 dark:text-gray-400">Sales Obtained</p>
-            <h2 className="text-2xl font-bold text-black dark:text-white">
-                {totalSales ? `$${totalSales}` : "0"} 
+            <p className="text-gray-500 dark:text-gray-400 font-medium text-sm uppercase tracking-wide">Total Sales</p>
+            <h2 className="text-3xl font-bold text-gray-900 dark:text-white mt-2">
+                {totalSales ? `$${totalSales.toLocaleString()}` : "$0"} 
             </h2>
-            <p className={`text-sm ${comparePercentage?.trend === 'negative' ? "text-red-500" : "text-green-500"}`}>
-               {comparePercentage?.percentChange > 0 ? "+" : ""}{comparePercentage?.percentChange}%
-            </p>
+            <div className={`flex items-center mt-2 text-sm font-medium ${comparePercentage?.trend === 'negative' ? "text-red-500 bg-red-100 dark:bg-red-500/10 px-2 py-0.5 rounded-full w-fit" : "text-green-500 bg-green-100 dark:bg-green-500/10 px-2 py-0.5 rounded-full w-fit"}`}>
+               {comparePercentage?.percentChange > 0 ? "+" : ""}{comparePercentage?.percentChange}% 
+               <span className="ml-1 text-xs font-normal text-gray-500 dark:text-gray-400">vs last month</span>
+            </div>
           </div>
-          <CircularProgressWithLabel value={comparePercentage?.percentChange > 100 ? 100 : comparePercentage?.percentChange} open={open} />
+          <div className="bg-blue-50 dark:bg-blue-900/20 p-3 rounded-full">
+            <CircularProgressWithLabel value={comparePercentage?.percentChange > 100 ? 100 : Math.abs(comparePercentage?.percentChange)} open={open} />
+          </div>
         </div>
 
-        <div className="bg-white dark:bg-[#111C43] rounded-xl p-5 shadow-sm flex-1 flex justify-between items-center min-h-[140px]">
+        <div className="bg-white dark:bg-[#111C43] rounded-2xl p-6 shadow-sm border border-gray-100 dark:border-gray-800 flex justify-between items-center transition-transform hover:scale-[1.02]">
           <div>
-            <p className="text-gray-500 dark:text-gray-400">New Users</p>
-            <h2 className="text-2xl font-bold text-black dark:text-white">
+            <p className="text-gray-500 dark:text-gray-400 font-medium text-sm uppercase tracking-wide">New Users</p>
+            <h2 className="text-3xl font-bold text-gray-900 dark:text-white mt-2">
                 {userData?.users?.last12Months?.[userData.users.last12Months.length - 1]?.count || 0}
             </h2>
-            <p className={`text-sm ${usersComparePercentage?.trend === 'negative' ? "text-red-500" : "text-green-500"}`}>
+             <div className={`flex items-center mt-2 text-sm font-medium ${usersComparePercentage?.trend === 'negative' ? "text-red-500 bg-red-100 dark:bg-red-500/10 px-2 py-0.5 rounded-full w-fit" : "text-green-500 bg-green-100 dark:bg-green-500/10 px-2 py-0.5 rounded-full w-fit"}`}>
                 {usersComparePercentage?.percentChange > 0 ? "+" : ""}{usersComparePercentage?.percentChange}%
-            </p>
+                <span className="ml-1 text-xs font-normal text-gray-500 dark:text-gray-400">vs last month</span>
+            </div>
           </div>
-          <PiUsersFourLight className="text-black dark:text-white text-4xl" />
+          <div className="bg-purple-50 dark:bg-purple-900/20 p-4 rounded-full">
+            <PiUsersFourLight className="text-purple-600 dark:text-purple-400 text-3xl" />
+          </div>
         </div>
       </div>
 
       {/* Order Analytics Chart */}
-      <div className="col-span-12 md:col-span-8 bg-white dark:bg-[#111C43] rounded-xl p-4 shadow-sm min-h-[300px]">
-         <h2 className="text-black dark:text-white text-[18px] font-medium mb-4">Orders Analytics</h2>
-         <div className="w-full h-[200px]">
-          <ResponsiveContainer width="100%" height="80%">
-            <LineChart data={ordersAnalyticsData}>
-              <CartesianGrid strokeDasharray="3 3" strokeOpacity={0.1} />
-              <XAxis dataKey="name" stroke={theme === 'dark' ? "#fff" : "#000"} />
-              <YAxis stroke={theme === 'dark' ? "#fff" : "#000"} />
-              <Tooltip contentStyle={{ backgroundColor: '#333', border: 'none', borderRadius: '5px' }} itemStyle={{ color: '#fff' }} />
-              <Line type="monotone" dataKey="count" stroke="#82ca9d" strokeWidth={3} dot={{r:4}} />
-            </LineChart>
+      <div className="col-span-12 lg:col-span-8 bg-white dark:bg-[#111C43] rounded-2xl p-6 shadow-sm border border-gray-100 dark:border-gray-800 min-h-[350px]">
+         <h2 className="text-gray-800 dark:text-white text-xl font-semibold mb-6">Orders Analytics</h2>
+         <div className="w-full h-[250px]">
+          <ResponsiveContainer width="100%" height="100%">
+            <AreaChart data={ordersAnalyticsData} margin={{ top: 20, right: 30, left: 0, bottom: 0 }}>
+              <defs>
+                <linearGradient id="colorOrdersWidget" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="5%" stopColor="#10b981" stopOpacity={0.3}/>
+                  <stop offset="95%" stopColor="#10b981" stopOpacity={0}/>
+                </linearGradient>
+              </defs>
+              <CartesianGrid vertical={false} strokeDasharray="3 3" stroke="#e5e7eb" opacity={0.3} />
+              <XAxis dataKey="name" stroke="#9ca3af" fontSize={12} tickLine={false} axisLine={false} />
+              <YAxis stroke="#9ca3af" fontSize={12} tickLine={false} axisLine={false} />
+               <Tooltip 
+                contentStyle={{ 
+                    backgroundColor: theme === 'dark' ? '#1f2937' : '#fff', 
+                    borderRadius: '8px', 
+                    boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)', 
+                    border: 'none',
+                    color: theme === 'dark' ? '#fff' : '#000'
+                }} 
+              />
+              <Area type="monotone" dataKey="count" stroke="#10b981" strokeWidth={3} fillOpacity={1} fill="url(#colorOrdersWidget)" />
+            </AreaChart>
           </ResponsiveContainer>
         </div>
       </div>
 
-      <div className="col-span-12 md:col-span-4 bg-white dark:bg-[#111C43] rounded-xl p-4 shadow-sm flex flex-col">
-        <h2 className="text-black dark:text-white text-[18px] font-medium mb-3">Recent Transactions</h2>
-        <AllInvoices isDashboard={true}/>
-      </div>
+     
 
     </div>
   );
