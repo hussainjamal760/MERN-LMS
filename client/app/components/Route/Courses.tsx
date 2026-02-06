@@ -7,13 +7,7 @@ type Props = {}
 
 const Courses = (props: Props) => {
     const { data, isLoading } = useGetUsersAllCoursesQuery({})
-    const [courses, setCourses] = useState<any[]>([])
-
-    useEffect(() => {
-        if (data) {
-            setCourses(data.courses);
-        }
-    }, [data])
+    const courses = data?.courses || [];
 
     return (
         <div>

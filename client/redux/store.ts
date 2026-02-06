@@ -9,7 +9,10 @@ export const store = configureStore({
         auth:authSlice
     },
     devTools:false,
-    middleware:(getDefaultMiddleware)=>getDefaultMiddleware().concat(apiSlice.middleware)
+    middleware: (getDefaultMiddleware) => getDefaultMiddleware({
+        serializableCheck: false,
+        immutableCheck: false,
+    }).concat(apiSlice.middleware)
 })
 
 const initializeApp = async()=>{

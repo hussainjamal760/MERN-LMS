@@ -3,7 +3,7 @@ import Link from "next/link";
 import React, { FC, useState, useEffect } from "react";
 import NavItems from "../utils/NavItems";
 import ThemeSwitcher from "../utils/ThemeSwitcher";
-import { HiOutlineMenuAlt3, HiOutlineUserCircle } from "react-icons/hi";
+import { HiOutlineMenuAlt3, HiOutlineUserCircle, HiOutlineX } from "react-icons/hi";
 import Image from "next/image";
 import CustomModel from "../utils/CustomModel";
 import Login from "./Auth/Login"
@@ -154,45 +154,56 @@ const Header: FC<Props> = ({ open, setOpen, activeItem ,route, setRoute }) => {
         
         
         {openSidebar && (
-          <div className="fixed w-full h-screen top-0 left-0 z-[9999] dark:bg-[unset] bg-[#00000024]" onClick={handleClose} id="screen">
-            <div className="w-[70%] fixed z-[999999] h-screen bg-white dark:bg-slate-900 dark:bg-opacity-90 top-0 right-0">
+          <div className="fixed w-full h-screen top-0 left-0 z-[9999] dark:bg-[unset] bg-[#00000024] backdrop-blur-sm" onClick={handleClose} id="screen">
+            <div className="w-[70%] fixed z-[999999] h-screen bg-white dark:bg-slate-900 dark:bg-opacity-90 top-0 right-0 shadow-xl overflow-y-auto transition-transform duration-300 ease-in-out">
               
-              <Link href='/'>
-                 <Image
-                  src="/logo.png"
-                  alt="Sheep Academy Logo"
-                  width={120} 
-                  height={35}
-                  className="cursor-pointer ml-5 my-4 object-contain"
+              <div className="w-full flex items-center justify-between p-3 border-b dark:border-[#ffffff1c]">
+                <Link href='/'>
+                  <Image
+                    src="/logo.png"
+                    alt="Sheep Academy Logo"
+                    width={100} 
+                    height={30}
+                    className="cursor-pointer object-contain"
+                  />
+                </Link>
+                <HiOutlineX 
+                  size={25} 
+                  className="cursor-pointer dark:text-white text-black hover:text-[#37a39a] transition-colors"
+                  onClick={() => setOpenSidebar(false)}
                 />
-              </Link>
+              </div>
 
              <NavItems activeItem={activeItem} isMobile={true}/>
-{
-  userData ? (
-     <Link href={"/profile"}>
-      <Image
-   src={
-    user?.avatar?.url ||
-    userData?.avatar?.url ||
-    "/avatar.png"
-  }
-  alt="profile"
-  width={30}
-  height={30}
-  className="w-[30px] h-[30px] rounded-full cursor-pointer ml-5 my-2"
-  style={{ border: activeItem === 5 ? "2px solid #37a39a" : "none" }}
-/>
-     </Link>
-  ) : (
-     <HiOutlineUserCircle
-        size={25}
-        className="cursor-pointer ml-5 my-2 text-black dark:text-white" onClick={()=>setOpen(true)}
-     />
-  )
-} <br/>
-              <br/>
-              <p className="text-[16px] px-2 pl-5 text-black dark:text-white">Copyright &copy; 2026 Sheep Acadamy</p>
+              
+              <div className="px-5 mt-5">
+                {userData ? (
+                  <Link href={"/profile"} className="flex items-center gap-2 mb-4">
+                    <Image
+                      src={user?.avatar?.url || userData?.avatar?.url || "/avatar.png"}
+                      alt="profile"
+                      width={30}
+                      height={30}
+                      className="w-[30px] h-[30px] rounded-full cursor-pointer"
+                      style={{ border: activeItem === 5 ? "2px solid #37a39a" : "none" }}
+                    />
+                    <span className="text-black dark:text-white font-[500]">
+                      {userData?.name || "User"}
+                    </span>
+                  </Link>
+                ) : (
+                  <HiOutlineUserCircle
+                      size={25}
+                      className="cursor-pointer text-black dark:text-white hover:text-[#37a39a] transition-colors mb-4" 
+                      onClick={() => {
+                        setOpenSidebar(false);
+                        setOpen(true);
+                      }}
+                  />
+                )}
+                <p className="text-[14px] text-gray-500 dark:text-gray-400 mt-5">Copyright &copy; 2026 Sheep Academy</p>
+              </div>
+
             </div>
           </div>
         )}

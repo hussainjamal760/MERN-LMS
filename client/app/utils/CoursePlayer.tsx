@@ -13,8 +13,7 @@ const CoursePlayer: FC<Props> = ({ videoUrl, title }) => {
     });
     const [error, setError] = useState<string | null>(null);
 
-    useEffect(() => {
-        setError(null); 
+    useEffect(() => { 
         
         const fetchVideoData = async () => {
             try {

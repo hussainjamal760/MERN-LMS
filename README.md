@@ -124,7 +124,7 @@ Ensure you have the following installed:
 
 ### 1. Clone the Repository
 ```bash
-git clone [https://github.com/your-username/mern-lms.git](https://github.com/your-username/mern-lms.git)
+git clone [https://github.com/hussainjamal760/mern-lms.git](https://github.com/hussainjamal760/mern-lms.git)
 cd mern-lms
 2. Backend Configuration (Server)
 Navigate to the server directory and install dependencies:

@@ -5,7 +5,7 @@ import ReviewCard from '../Review/ReviewsCard';
 import Lottie from 'lottie-react';
 import animationData from "../../../public/Review_Animation.json"; 
 
-type Props = {};
+
 
 export const reviews = [
     {
@@ -52,7 +52,7 @@ export const reviews = [
     },
 ];
 
-const Reviews = (props: Props) => {
+const Reviews = () => {
   return (
     <div className="w-[90%] 800px:w-[85%] m-auto my-16">
         
